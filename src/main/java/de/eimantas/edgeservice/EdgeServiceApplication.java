@@ -12,6 +12,7 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -24,6 +25,7 @@ import feign.RequestInterceptor;
 @EnableZuulProxy
 @EnableOAuth2Sso
 @SpringBootApplication
+@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class EdgeServiceApplication {
 
 	public static void main(String[] args) {
@@ -31,12 +33,12 @@ public class EdgeServiceApplication {
 	}
 
 	@Bean
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public FilterRegistrationBean simpleCorsFilter() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+		config.setAllowedOrigins(Collections.singletonList("*"));
 		config.setAllowedMethods(Collections.singletonList("*"));
 		config.setAllowedHeaders(Collections.singletonList("*"));
 		source.registerCorsConfiguration("/**", config);
