@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,8 @@ import de.eimantas.edgeservice.dto.Expenses;
 public class ExpensesController {
 	private final ExpensesClient expensesClient;
 
+	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	public ExpensesController(ExpensesClient expensesClient) {
 		this.expensesClient = expensesClient;
 	}
@@ -23,6 +26,7 @@ public class ExpensesController {
 	@HystrixCommand(fallbackMethod = "fallback")
 	@GetMapping("/open-expenses")
 	public Collection<Expenses> openExpenses() {
+		logger.info("edge expenses request");
 		return expensesClient.readExpenses().getContent().stream().filter(this::isOpen).collect(Collectors.toList());
 	}
 
