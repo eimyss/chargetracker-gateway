@@ -42,7 +42,9 @@ public class ExpensesController {
 		return !expenses.getName().equals("Ferrari") && !expenses.getName().equals("Bugatti");
 	}
 
-	public Collection<Expense> fallback() {
+	public Collection<Expense> fallback(Throwable e) {
+		logger.warn("faLLING BACK on get expenses");
+		e.printStackTrace();
 		List<Expense> list = new ArrayList<>();
 		list.add(new Expense(0L, "NO DATA", "test", BigDecimal.ZERO));
 		return list;
