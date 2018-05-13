@@ -1,9 +1,13 @@
 package de.eimantas.edgeservice;
 
 import de.eimantas.edgeservice.client.ExpensesClient;
+import de.eimantas.edgeservice.client.OverviewClient;
 import de.eimantas.edgeservice.dto.AccountOverView;
+import de.eimantas.edgeservice.dto.Expense;
+import de.eimantas.edgeservice.dto.ExpensesResponse;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,7 +19,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +33,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
@@ -43,14 +50,34 @@ public class FeignClientTest {
     @Autowired
     private ExpensesClient client;
 
+    @Autowired
+    private OverviewClient overviewClient;
 
     @Autowired
     private OAuth2ClientContext oauth2ClientContext;
 
+    @Before
+    public void setup() throws Exception {
+
+        logger.info("setting up appllication");
+
+        OAuth2AuthenticationDetails details =   Mockito.mock(OAuth2AuthenticationDetails.class);
+        Mockito.when(details.getTokenValue()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmQzakhPMTZqNjNwSmRPTGZxRl9jM2FxMUs0V1JyR2MyOFNLaF80OVlwMGciLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjIyNzY2OSwiZXhwIjoxNTI2MjMxMjY5LCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbImVtYWlsIiwib3BlbmlkIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.By3ihpp2UX75YhLSpzWJiTZBLEM8cYTB8yKHBKjaPScddE5AqTQ3er3Du1plrRP0Yxon98dy0epGVurnMBEN6SpbuSz_xrIctpgXAe_4aN5_8p8pV27uEgZ49FzHtUdm_vQu861dizhAPXV3w3l-bNqm1QlbYQGUI7T4liLLiXYaTdBEpee7qQ5I47IO0m21BoeGsvM4yejNtU0_-cKD9dJpHvLG5wN4SCDRkjNhlnu5uvq6MgjYDxpbFD5WdbY_w7Q86Kt96bUuBpSUG8KB4RP3bsG-KSMpH8bn6BT4BrG0plY3tS9DpG8QsKoPfLMXcyQiscCCO1wPsRPOeBPa8A");
+        Authentication authentication = Mockito.mock(Authentication.class);
+        Mockito.when(authentication.getDetails()).thenReturn(details);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+
     @Test
     public void clientConnects() {
-        assertNotNull(client.readExpenses());
-        ArrayList content = new ArrayList<>(client.readExpenses().getContent());
+        Collection<Expense> response  =  client.readExpenses();
+        assertNotNull(response);
+        ArrayList content = new ArrayList<>(response);
+
+        logger.info(response.toString());
         assertThat(content.size(),greaterThan(0));
 
         logger.info("eimantas test");
@@ -62,21 +89,14 @@ public class FeignClientTest {
     @Test
     public void clientOverviewConnects() {
 
-        OAuth2AuthenticationDetails details =   Mockito.mock(OAuth2AuthenticationDetails.class);
-        Mockito.when(details.getTokenValue()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULkMxaFZuV2FKT0xHY1otME5JUTJqVTBtNFVvU3VoZzlCV3lDaUdoaV9HVDgiLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjE0MTQ1MiwiZXhwIjoxNTI2MTQ1MDUyLCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbIm9wZW5pZCIsImVtYWlsIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.VTlKI98UebKg6GlClv58cnX25x8FXeE5xnjtZoJAxOlOYWwxXfDvYSndQ7_nHrhgSVVfoNE_zkG9w1PWOGlavhZuwtaD2wKRSaW13p79nUcLQAIzkRgNI0mCR5tgjWZmPwvNjbRqEfLC8Q3NMBuGyYFJxKDTz4wrBbauQ1YvoCVzNPkD8kBx2ibX7sfn98VmTUuo096AJgxaz6HLcWwEM0e7PRViUPiBUm5PU2doR8vpjCZabTFOAAnJGxNuITw2yZlZOxp3LBcxKyxf_mSDmA5c6IxRyDNSC4CfdQe6J2sGrzQEnuHmuiaayynK6_cSo9tfIa0pWlxQe6OHkzLzmA");
-        Authentication authentication = Mockito.mock(Authentication.class);
-        Mockito.when(authentication.getDetails()).thenReturn(details);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-
-        Resources<AccountOverView> response = client.readOverview(482);
+        AccountOverView response = overviewClient.readOverview(482);
 
         assertNotNull(response);
-        ArrayList content = new ArrayList<>(response.getContent());
+        assertNotNull(response.getTotal());
+        assertNotNull(response.getRefAccount());
+        logger.info("response: " + response.toString());
 
-        logger.info("eimantas test");
-        content.forEach(e -> logger.info(e.toString()));
+
 
     }
 
@@ -84,10 +104,12 @@ public class FeignClientTest {
     @Configuration
     @EnableAutoConfiguration
     @EnableFeignClients
+    @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
     protected static class TestApplication {
 
         public static void main(String[] args) {
             SpringApplication.run(EdgeServiceApplication.class, args);
+
         }
 
 

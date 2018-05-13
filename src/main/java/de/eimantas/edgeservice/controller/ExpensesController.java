@@ -6,11 +6,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.eimantas.edgeservice.client.OverviewClient;
+import de.eimantas.edgeservice.dto.AccountOverView;
+import de.eimantas.edgeservice.dto.ExpensesResponse;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.hateoas.Resources;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
@@ -23,6 +28,9 @@ public class ExpensesController {
 
 	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@Autowired
+    private OverviewClient overviewClient;
+
 	public ExpensesController(ExpensesClient expensesClient) {
 		this.expensesClient = expensesClient;
 	}
@@ -32,21 +40,30 @@ public class ExpensesController {
 	@CrossOrigin(origins = "*")
 	public Collection<Expense> openExpenses() {
 		logger.info("edge expenses request");
-		Resources<Expense> expenses = expensesClient.readExpenses();
-		logger.info("expenses count: " + expenses.getContent().size());
-		return expensesClient.readExpenses().getContent().stream().filter(this::isOpen).collect(Collectors.toList());
+        Collection<Expense> expenses = expensesClient.readExpenses();
+		logger.info("expenses count: " + expenses.size());
+		return expenses.stream().filter(this::isOpen).collect(Collectors.toList());
 	}
 
 	private boolean isOpen(Expense expenses) {
-		logger.info("checking expense : " + expenses.toString());
-		return !expenses.getName().equals("Ferrari") && !expenses.getName().equals("Bugatti");
+            return true;
 	}
+
+
+    @GetMapping("/account/overview/{id}")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<AccountOverView> readOverviewForAccount(@PathVariable long id) {
+        logger.info("edge account overview request");
+        AccountOverView overview = overviewClient.readOverview(id);
+        logger.info("expenses count: " + overview.toString());
+        return new ResponseEntity(overview, HttpStatus.OK);
+    }
 
 	public Collection<Expense> fallback(Throwable e) {
 		logger.warn("faLLING BACK on get expenses");
 		e.printStackTrace();
 		List<Expense> list = new ArrayList<>();
-		list.add(new Expense(0L, "NO DATA", "test", BigDecimal.ZERO));
+		list.add(new Expense());
 		return list;
 	}
 }
