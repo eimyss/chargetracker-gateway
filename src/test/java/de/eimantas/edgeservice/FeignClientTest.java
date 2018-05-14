@@ -4,13 +4,11 @@ import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.client.OverviewClient;
 import de.eimantas.edgeservice.dto.AccountOverView;
 import de.eimantas.edgeservice.dto.Expense;
-import de.eimantas.edgeservice.dto.ExpensesResponse;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -62,7 +58,7 @@ public class FeignClientTest {
         logger.info("setting up appllication");
 
         OAuth2AuthenticationDetails details =   Mockito.mock(OAuth2AuthenticationDetails.class);
-        Mockito.when(details.getTokenValue()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmQzakhPMTZqNjNwSmRPTGZxRl9jM2FxMUs0V1JyR2MyOFNLaF80OVlwMGciLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjIyNzY2OSwiZXhwIjoxNTI2MjMxMjY5LCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbImVtYWlsIiwib3BlbmlkIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.By3ihpp2UX75YhLSpzWJiTZBLEM8cYTB8yKHBKjaPScddE5AqTQ3er3Du1plrRP0Yxon98dy0epGVurnMBEN6SpbuSz_xrIctpgXAe_4aN5_8p8pV27uEgZ49FzHtUdm_vQu861dizhAPXV3w3l-bNqm1QlbYQGUI7T4liLLiXYaTdBEpee7qQ5I47IO0m21BoeGsvM4yejNtU0_-cKD9dJpHvLG5wN4SCDRkjNhlnu5uvq6MgjYDxpbFD5WdbY_w7Q86Kt96bUuBpSUG8KB4RP3bsG-KSMpH8bn6BT4BrG0plY3tS9DpG8QsKoPfLMXcyQiscCCO1wPsRPOeBPa8A");
+        Mockito.when(details.getTokenValue()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnIyd2c2em9XZ2JiYTY4MTNHVU5JV2d5LXRHdG9vRS1zUlh4ZjAzTFlmWTgiLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjMxMDM3NywiZXhwIjoxNTI2MzEzOTc3LCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbIm9wZW5pZCIsImVtYWlsIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.UegFsGzvnI3B8TfutyazK6voHRYfaswPZRv7k2TWksKDc7oDdg_5TJ31SBVroY6DqjUp8ZqTG4i3JpPyCwYMtcFzs5_U4cdP2P4FEORW1TjBeGgx1yL_h-YMLBhLF-dRLFstudQKBVNLDFFw5g6SPkPKVXbPaWOSCLBt0zWH7dWQEG9dJQZvsq_OYZKxvfTLSzqU1ejOsZrlWWFW5Q0jme495j_BZrIFlNPnFC35qyzjVbEkri2D6CWB3-gIEjN4wJw7LAYbfQZO7RSAi8YlUHbOLivzSXNRtE2so4cZqSrkWH3Ysjb5c5kCdyP29sb-nSoKhmdAJN59UpT01fdqKA");
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authentication.getDetails()).thenReturn(details);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -73,6 +69,37 @@ public class FeignClientTest {
 
     @Test
     public void clientConnects() {
+        Collection<Expense> response  =  client.readExpenses();
+        assertNotNull(response);
+        ArrayList content = new ArrayList<>(response);
+
+        logger.info(response.toString());
+        assertThat(content.size(),greaterThan(0));
+
+        logger.info("eimantas test");
+        content.forEach(e -> logger.info(e.toString()));
+
+    }
+
+
+    @Test
+    public void searchClientConnects() {
+        Collection<Expense> response  =  client.searchExpenses("AMC");
+        assertNotNull(response);
+        ArrayList content = new ArrayList<>(response);
+
+        logger.info(response.toString());
+        assertThat(content.size(),greaterThan(0));
+
+        logger.info("eimantas test");
+        content.forEach(e -> logger.info(e.toString()));
+
+    }
+
+
+
+    @Test
+    public void clientSearchConnects() {
         Collection<Expense> response  =  client.readExpenses();
         assertNotNull(response);
         ArrayList content = new ArrayList<>(response);
