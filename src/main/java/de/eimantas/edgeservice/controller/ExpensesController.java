@@ -61,6 +61,15 @@ public class ExpensesController {
         return expenses.stream().filter(this::isOpen).collect(Collectors.toList());
     }
 
+	@PostMapping("/save")
+	@CrossOrigin(origins = "*")
+	public ResponseEntity<String> persistExpense(@RequestBody Expense expense) {
+		logger.info("saving expense : " + expense.toString());
+		expensesClient.postExpense(expense);
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+
+	}
+
 
 	public Collection<Expense> fallback(Throwable e) {
 		logger.warn("faLLING BACK on get expenses");

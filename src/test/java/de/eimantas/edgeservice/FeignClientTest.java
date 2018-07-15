@@ -18,6 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,12 +33,17 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,11 +56,24 @@ public class FeignClientTest {
     @Autowired
     private ExpensesClient client;
 
+
+    @SuppressWarnings("rawtypes")
+    private HttpMessageConverter mappingJackson2HttpMessageConverter;
+
     @Autowired
     private OverviewClient overviewClient;
 
     @Autowired
     private OAuth2ClientContext oauth2ClientContext;
+
+    @Autowired
+    void setConverters(HttpMessageConverter<?>[] converters) {
+
+        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
+
+        assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+    }
 
     @Before
     public void setup() throws Exception {
@@ -95,6 +118,27 @@ public class FeignClientTest {
         content.forEach(e -> logger.info(e.toString()));
 
     }
+
+    @Test
+    public void addClientExpense() throws IOException {
+
+        Expense exp = new Expense();
+        exp.setName("uploaded");
+        exp.setCategory("test");
+        exp.setBetrag(BigDecimal.TEN);
+        exp.setOrt("Mainz");
+
+
+        String bookmarkJson = json(exp);
+
+        ResponseEntity<String>  response  =  client.postExpense(exp);
+        assertNotNull(response);
+
+        logger.info(response.toString());
+        assertThat(response.getStatusCode(),equalTo(status().isCreated()));
+
+    }
+
 
 
 
@@ -159,5 +203,10 @@ public class FeignClientTest {
     }
 
 
-
+    @SuppressWarnings("unchecked")
+    protected String json(Object o) throws IOException {
+        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+        return mockHttpOutputMessage.getBodyAsString();
+    }
 }
