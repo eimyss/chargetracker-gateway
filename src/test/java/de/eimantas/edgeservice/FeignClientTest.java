@@ -3,7 +3,7 @@ package de.eimantas.edgeservice;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.client.OverviewClient;
 import de.eimantas.edgeservice.dto.AccountOverView;
-import de.eimantas.edgeservice.dto.Expense;
+import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.Before;
@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
@@ -33,18 +34,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,6 +59,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FeignClientTest {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
+    private MockMvc mockMvc;
 
     @Autowired
     private ExpensesClient client;
@@ -63,6 +72,9 @@ public class FeignClientTest {
 
     @Autowired
     private OverviewClient overviewClient;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private OAuth2ClientContext oauth2ClientContext;
@@ -80,7 +92,7 @@ public class FeignClientTest {
     public void setup() throws Exception {
 
         logger.info("setting up appllication");
-
+        this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
         // TODO FIX TESTS!!!!!!!
 
@@ -97,15 +109,37 @@ public class FeignClientTest {
     @Test
     @Ignore
     public void clientConnects() {
-        Collection<Expense> response  =  client.readExpenses();
+       ResponseEntity response  =  client.getUserExpenses();
         assertNotNull(response);
-        ArrayList content = new ArrayList<>(response);
-
         logger.info(response.toString());
-        assertThat(content.size(),greaterThan(0));
 
-        logger.info("eimantas test");
-        content.forEach(e -> logger.info(e.toString()));
+
+    }
+
+
+    @Test
+    @Ignore
+    public void getToken() throws Exception {
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("client_id", "0oaepwz9ykeNaSuWK0h7");
+        params.add("username", "eimyss@gmail.com");
+        params.add("password", "rasas");
+
+        ResultActions result
+                = mockMvc.perform(post("/oauth/token")
+                .params(params)
+                .with(httpBasic("0oaepwz9ykeNaSuWK0h7","secret"))
+                .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isOk());
+
+
+        String resultString = result.andReturn().getResponse().getContentAsString();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        logger.info(jsonParser.parseMap(resultString).get("access_token").toString());
+
 
     }
 
@@ -113,15 +147,11 @@ public class FeignClientTest {
     @Test
     @Ignore
     public void searchClientConnects() {
-        Collection<Expense> response  =  client.searchExpenses("AMC");
+        ResponseEntity response  =  client.searchExpenses("AMC");
         assertNotNull(response);
-        ArrayList content = new ArrayList<>(response);
 
         logger.info(response.toString());
-        assertThat(content.size(),greaterThan(0));
 
-        logger.info("eimantas test");
-        content.forEach(e -> logger.info(e.toString()));
 
     }
 
@@ -129,7 +159,7 @@ public class FeignClientTest {
     @Ignore
     public void addClientExpense() throws IOException {
 
-        Expense exp = new Expense();
+        ExpenseDTO exp = new ExpenseDTO();
         exp.setName("uploaded");
         exp.setCategory("test");
         exp.setBetrag(BigDecimal.TEN);
@@ -138,7 +168,7 @@ public class FeignClientTest {
 
         String bookmarkJson = json(exp);
 
-        ResponseEntity<String>  response  =  client.postExpense(exp);
+        ResponseEntity response  =  client.postExpense(exp);
         assertNotNull(response);
 
         logger.info(response.toString());
@@ -152,15 +182,11 @@ public class FeignClientTest {
     @Test
     @Ignore
     public void clientSearchConnects() {
-        Collection<Expense> response  =  client.readExpenses();
+       ResponseEntity response  =  client.getAllExpenses();
         assertNotNull(response);
-        ArrayList content = new ArrayList<>(response);
 
         logger.info(response.toString());
-        assertThat(content.size(),greaterThan(0));
 
-        logger.info("eimantas test");
-        content.forEach(e -> logger.info(e.toString()));
 
     }
 

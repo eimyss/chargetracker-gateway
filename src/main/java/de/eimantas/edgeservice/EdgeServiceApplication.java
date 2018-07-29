@@ -1,7 +1,6 @@
 package de.eimantas.edgeservice;
 
-import java.util.Collections;
-
+import feign.RequestInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
@@ -13,11 +12,12 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
+import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import feign.RequestInterceptor;
+import java.util.Collections;
 
 @EnableFeignClients
 @EnableCircuitBreaker
@@ -30,6 +30,12 @@ public class EdgeServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EdgeServiceApplication.class, args);
+	}
+
+
+	@Bean
+	public RequestContextListener requestContextListener() {
+		return new RequestContextListener();
 	}
 
 	@Bean
