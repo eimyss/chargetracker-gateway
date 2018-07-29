@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(value = "expenses-catalog-servers-integration", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "expenses-catalog-servers", configuration = ExpensesClientConfig.class)
 public interface ExpensesClient {
 
 	@GetMapping("/expense/get/{id}")

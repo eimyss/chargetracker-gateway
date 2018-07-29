@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = "expenses-catalog-servers-integration", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "expenses-catalog-servers", configuration = ExpensesClientConfig.class)
 public interface AccountsClient {
 
 	@GetMapping("/account/overview/{id}")
