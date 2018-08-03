@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 public interface ExpensesClient {
 
 	@GetMapping("/expense/get/{id}")
-	ResponseEntity getExpenseById(@PathVariable long id);
+	ResponseEntity getExpenseById(@PathVariable(name = "id") long id);
 
     @PostMapping("/expense/add")
     ResponseEntity postExpense(@RequestBody ExpenseDTO expense);
 
 	@GetMapping("/expenses/search")
-	ResponseEntity searchExpenses(@RequestParam("name") String name);
+	ResponseEntity searchExpenses(@RequestParam(name ="name") String name);
 
 	@GetMapping("/expense/populate")
 	void populateExpenses();

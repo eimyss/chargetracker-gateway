@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AccountsClient {
 
 	@GetMapping("/account/overview/{id}")
-	ResponseEntity readAccountOverview( @PathVariable long id);
+	ResponseEntity readAccountOverview( @PathVariable(name = "id") long id);
 
     @GetMapping("/account/list")
     ResponseEntity getAccountList();
-
-	@PostMapping("/account/save")
-	ResponseEntity postExpense(@RequestBody AccountDTO account);
 
 	@GetMapping("/account/global-overview")
 	ResponseEntity getGlobalOverview();
 
 	@GetMapping("/account/overview/expenses/{id}")
-	ResponseEntity getExpensesOverview(@PathVariable long id);
+	ResponseEntity getExpensesOverview(@PathVariable(name = "id") long id);
+
+	@PostMapping("/account/save")
+	ResponseEntity postExpense(@RequestBody AccountDTO account);
 }
