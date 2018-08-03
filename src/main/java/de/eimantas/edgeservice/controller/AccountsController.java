@@ -2,15 +2,13 @@ package de.eimantas.edgeservice.controller;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.eimantas.edgeservice.client.AccountsClient;
+import de.eimantas.edgeservice.dto.AccountDTO;
 import de.eimantas.edgeservice.dto.AccountOverView;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountsController {
@@ -59,6 +57,15 @@ public class AccountsController {
         ResponseEntity expenses = accountsClient.getExpensesOverview(id);
         logger.info("account list response: " + expenses.toString());
         return expenses;
+    }
+
+    @PostMapping("/account/save")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity persistExpense(@RequestBody AccountDTO account) {
+        logger.info("saving account : " + account.toString());
+        accountsClient.postExpense(account);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
     }
 
 
