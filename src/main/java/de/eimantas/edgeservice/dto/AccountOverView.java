@@ -15,7 +15,7 @@ public class AccountOverView {
 
     private Long id;
     @JsonProperty("refAccount")
-    private Account refAccount;
+    private AccountDTO refAccount;
     private BigDecimal total;
     private boolean active;
     private int countExpenses;
