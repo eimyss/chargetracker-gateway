@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ExpensesController {
 	private final ExpensesClient expensesClient;
@@ -48,6 +50,15 @@ public class ExpensesController {
 
 	}
 
+
+	@GetMapping("/expense/account/{id}")
+	@CrossOrigin(origins = "*")
+	public ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable long id) {
+		logger.info("list expense request for account id " + id);
+		ResponseEntity<List<ExpenseDTO>> expenses = expensesClient.getExpensesForAccount(id);
+		logger.info("returning " + expenses.toString() + " expenses");
+		return expenses;
+	}
 
 
 	@GetMapping("/expense/get/{id}")

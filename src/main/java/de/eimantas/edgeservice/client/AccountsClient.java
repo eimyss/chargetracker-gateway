@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @FeignClient(value = "expenses-catalog-servers", configuration = ExpensesClientConfig.class)
 public interface AccountsClient {
 
@@ -15,7 +17,7 @@ public interface AccountsClient {
 	ResponseEntity readAccountOverview( @PathVariable(name = "id") long id);
 
     @GetMapping("/account/list")
-    ResponseEntity getAccountList();
+    ResponseEntity<List<AccountDTO>> getAccountList();
 
 	@GetMapping("/account/global-overview")
 	ResponseEntity getGlobalOverview();

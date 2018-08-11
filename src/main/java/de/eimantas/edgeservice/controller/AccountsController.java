@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class AccountsController {
 
@@ -19,12 +21,11 @@ public class AccountsController {
 	@Autowired
 	private AccountsClient accountsClient;
 
-	@HystrixCommand(fallbackMethod = "fallback")
 	@GetMapping("/account/list")
 	@CrossOrigin(origins = "*")
-	public ResponseEntity getAccountList() {
+	public ResponseEntity<List<AccountDTO>> getAccountList() {
 		logger.info("edge expenses request");
-        ResponseEntity expenses = accountsClient.getAccountList();
+        ResponseEntity<List<AccountDTO>> expenses = accountsClient.getAccountList();
 		logger.info("account list response: " + expenses.toString());
 		return expenses;
 	}
