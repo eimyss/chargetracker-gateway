@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -21,12 +22,12 @@ public class ExpensesController {
 		this.expensesClient = expensesClient;
 	}
 
-	@HystrixCommand(fallbackMethod = "fallback")
+	//@HystrixCommand(fallbackMethod = "fallback")
 	@GetMapping("/expenses/all")
 	@CrossOrigin(origins = "*")
-	public ResponseEntity openExpenses() {
+	public ResponseEntity<Collection<ExpenseDTO>> openExpenses() {
 		logger.info("edge all expenses request");
-        ResponseEntity expenses = expensesClient.getAllExpenses();
+        ResponseEntity<Collection<ExpenseDTO>> expenses = expensesClient.getAllExpenses();
 		return expenses;
 	}
 
@@ -71,9 +72,9 @@ public class ExpensesController {
 
 	@GetMapping("/expenses/user")
 	@CrossOrigin(origins = "*")
-	public ResponseEntity getUserExpenses() {
+	public ResponseEntity<List<ExpenseDTO>> getUserExpenses() {
 		logger.info("edge get user expenses");
-		ResponseEntity response = expensesClient.getUserExpenses();
+		ResponseEntity<List<ExpenseDTO>> response = expensesClient.getUserExpenses();
 		return response;
 	}
 

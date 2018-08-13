@@ -1,6 +1,7 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.dto.AccountDTO;
+import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public interface AccountsClient {
     ResponseEntity<List<AccountDTO>> getAccountList();
 
 	@GetMapping("/account/global-overview")
-	ResponseEntity getGlobalOverview();
+	ResponseEntity<AllAccountsOverViewDTO> getGlobalOverview();
 
 	@GetMapping("/account/overview/expenses/{id}")
 	ResponseEntity getExpensesOverview(@PathVariable(name = "id") long id);
