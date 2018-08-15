@@ -5,6 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @FeignClient(value = "expenses-catalog-servers", configuration = ExpensesClientConfig.class)
@@ -26,10 +27,10 @@ public interface ExpensesClient {
 	ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable(name = "id") long id);
 
 	@GetMapping("/expense/get/all")
-	ResponseEntity getAllExpenses();
+	ResponseEntity<Collection<ExpenseDTO>> getAllExpenses();
 
 	@GetMapping("/expense/user-expenses")
-	ResponseEntity getUserExpenses();
+	ResponseEntity<List<ExpenseDTO>> getUserExpenses();
 
 
 
