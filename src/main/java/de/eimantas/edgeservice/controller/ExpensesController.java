@@ -75,6 +75,7 @@ public class ExpensesController {
 	public ResponseEntity<List<ExpenseDTO>> getUserExpenses() {
 		logger.info("edge get user expenses");
 		ResponseEntity<List<ExpenseDTO>> response = expensesClient.getUserExpenses();
+		logger.info(response.toString());
 		return response;
 	}
 

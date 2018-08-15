@@ -3,7 +3,7 @@ package de.eimantas.edgeservice.controller;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.eimantas.edgeservice.client.AccountsClient;
 import de.eimantas.edgeservice.dto.AccountDTO;
-import de.eimantas.edgeservice.dto.AccountOverView;
+import de.eimantas.edgeservice.dto.AccountOverViewDTO;
 import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +34,14 @@ public class AccountsController {
 
     @GetMapping("/account/overview/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<AccountOverView> readOverviewForAccount(@PathVariable long id) {
+    public ResponseEntity<AccountOverViewDTO> readOverviewForAccount(@PathVariable long id) {
         logger.info("edge account overview request");
-        ResponseEntity<AccountOverView> overview = accountsClient.readAccountOverview(id);
+        ResponseEntity<AccountOverViewDTO> overview = accountsClient.readAccountOverview(id);
         logger.info("expenses count: " + overview.toString());
         return overview;
     }
 
-    @HystrixCommand(fallbackMethod = "fallback")
+ //   @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/account/global")
     @CrossOrigin(origins = "*")
     public ResponseEntity<AllAccountsOverViewDTO> getGlobalOverview() {

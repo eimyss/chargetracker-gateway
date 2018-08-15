@@ -1,7 +1,6 @@
 package de.eimantas.edgeservice.dto;
 
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@ApiModel(description = "")
 public class AccountOverViewDTO {
 
     private Long id;
