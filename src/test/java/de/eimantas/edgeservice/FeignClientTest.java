@@ -229,7 +229,7 @@ public class FeignClientTest {
 
                 if (authentication != null && authentication.getDetails() instanceof KeycloakAuthenticationToken) {
                     KeycloakAuthenticationToken details = (KeycloakAuthenticationToken) authentication.getDetails();
-                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE,  ((KeycloakAuthenticationToken) authentication).getAccount().getKeycloakSecurityContext().getToken()));
+                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE,  ((KeycloakAuthenticationToken) authentication).getAccount().getKeycloakSecurityContext().getTokenString()));
                 }
             }
         }

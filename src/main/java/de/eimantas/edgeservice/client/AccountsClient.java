@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(value = "expenses-catalog-servers-int", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "${feign.client.config.expenses.name}", configuration = ExpensesClientConfig.class)
 public interface AccountsClient {
 
 	@GetMapping("/account/overview/{id}")
