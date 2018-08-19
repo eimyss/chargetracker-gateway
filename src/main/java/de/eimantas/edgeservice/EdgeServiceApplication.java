@@ -3,7 +3,6 @@ package de.eimantas.edgeservice;
 import feign.RequestInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -23,7 +22,6 @@ import java.util.Collections;
 @EnableCircuitBreaker
 @EnableDiscoveryClient
 @EnableZuulProxy
-@EnableOAuth2Sso
 @SpringBootApplication
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class EdgeServiceApplication {

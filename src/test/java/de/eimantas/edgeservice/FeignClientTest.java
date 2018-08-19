@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,6 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -76,8 +75,7 @@ public class FeignClientTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private OAuth2ClientContext oauth2ClientContext;
+
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
@@ -96,8 +94,8 @@ public class FeignClientTest {
 
         // TODO FIX TESTS!!!!!!!
 
-        OAuth2AuthenticationDetails details =   Mockito.mock(OAuth2AuthenticationDetails.class);
-        Mockito.when(details.getTokenValue()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnIyd2c2em9XZ2JiYTY4MTNHVU5JV2d5LXRHdG9vRS1zUlh4ZjAzTFlmWTgiLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjMxMDM3NywiZXhwIjoxNTI2MzEzOTc3LCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbIm9wZW5pZCIsImVtYWlsIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.UegFsGzvnI3B8TfutyazK6voHRYfaswPZRv7k2TWksKDc7oDdg_5TJ31SBVroY6DqjUp8ZqTG4i3JpPyCwYMtcFzs5_U4cdP2P4FEORW1TjBeGgx1yL_h-YMLBhLF-dRLFstudQKBVNLDFFw5g6SPkPKVXbPaWOSCLBt0zWH7dWQEG9dJQZvsq_OYZKxvfTLSzqU1ejOsZrlWWFW5Q0jme495j_BZrIFlNPnFC35qyzjVbEkri2D6CWB3-gIEjN4wJw7LAYbfQZO7RSAi8YlUHbOLivzSXNRtE2so4cZqSrkWH3Ysjb5c5kCdyP29sb-nSoKhmdAJN59UpT01fdqKA");
+        KeycloakAuthenticationToken details =   Mockito.mock(KeycloakAuthenticationToken.class);
+        Mockito.when(details.getPrincipal()).thenReturn("eyJraWQiOiJvZHcwY2oxaEljMzRZRDBzV2RxUFNrVmFiZWppNVhfX3lMd0xISF8wUzdVIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULnIyd2c2em9XZ2JiYTY4MTNHVU5JV2d5LXRHdG9vRS1zUlh4ZjAzTFlmWTgiLCJpc3MiOiJodHRwczovL2Rldi00NjMwMDgub2t0YXByZXZpZXcuY29tL29hdXRoMi9kZWZhdWx0IiwiYXVkIjoiYXBpOi8vZGVmYXVsdCIsImlhdCI6MTUyNjMxMDM3NywiZXhwIjoxNTI2MzEzOTc3LCJjaWQiOiIwb2FlcHd6OXlrZU5hU3VXSzBoNyIsInVpZCI6IjAwdWVxNDVjbDVwUGRtaTdEMGg3Iiwic2NwIjpbIm9wZW5pZCIsImVtYWlsIl0sInN1YiI6ImVpbXlzc0BnbWFpbC5jb20ifQ.UegFsGzvnI3B8TfutyazK6voHRYfaswPZRv7k2TWksKDc7oDdg_5TJ31SBVroY6DqjUp8ZqTG4i3JpPyCwYMtcFzs5_U4cdP2P4FEORW1TjBeGgx1yL_h-YMLBhLF-dRLFstudQKBVNLDFFw5g6SPkPKVXbPaWOSCLBt0zWH7dWQEG9dJQZvsq_OYZKxvfTLSzqU1ejOsZrlWWFW5Q0jme495j_BZrIFlNPnFC35qyzjVbEkri2D6CWB3-gIEjN4wJw7LAYbfQZO7RSAi8YlUHbOLivzSXNRtE2so4cZqSrkWH3Ysjb5c5kCdyP29sb-nSoKhmdAJN59UpT01fdqKA");
         Authentication authentication = Mockito.mock(Authentication.class);
         Mockito.when(authentication.getDetails()).thenReturn(details);
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -229,9 +227,9 @@ public class FeignClientTest {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 Authentication authentication = securityContext.getAuthentication();
 
-                if (authentication != null && authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
-                    OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
-                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, details.getTokenValue()));
+                if (authentication != null && authentication.getDetails() instanceof KeycloakAuthenticationToken) {
+                    KeycloakAuthenticationToken details = (KeycloakAuthenticationToken) authentication.getDetails();
+                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE,  ((KeycloakAuthenticationToken) authentication).getAccount().getKeycloakSecurityContext().getToken()));
                 }
             }
         }

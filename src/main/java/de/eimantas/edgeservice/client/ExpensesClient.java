@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "expenses-catalog-servers", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "expenses-catalog-servers-int", configuration = ExpensesClientConfig.class)
 public interface ExpensesClient {
 
 	@GetMapping("/expense/get/{id}")
