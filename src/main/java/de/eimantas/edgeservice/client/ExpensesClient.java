@@ -5,6 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 @FeignClient(value = "${feign.client.config.expenses.name}", configuration = ExpensesClientConfig.class)
@@ -14,22 +15,22 @@ public interface ExpensesClient {
 	ResponseEntity getExpenseById(@PathVariable(name = "id") long id);
 
     @PostMapping("/expense/add")
-    ResponseEntity postExpense(@RequestBody ExpenseDTO expense);
+    ResponseEntity<String> postExpense(@RequestBody ExpenseDTO expense);
 
 	@GetMapping("/expenses/search")
 	ResponseEntity searchExpenses(@RequestParam(name ="name") String name);
 
 	@GetMapping("/expense/populate")
-	void populateExpenses();
+	ResponseEntity<String> populateExpenses();
 
 	@GetMapping("/expense/account/{id}")
 	ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable(name = "id") long id);
 
 	@GetMapping("/expense/get/all")
-	ResponseEntity getAllExpenses();
+	Collection<ExpenseDTO> getAllExpenses();
 
 	@GetMapping("/expense/user-expenses")
-	ResponseEntity getUserExpenses();
+	Collection<ExpenseDTO> getUserExpenses();
 
 
 

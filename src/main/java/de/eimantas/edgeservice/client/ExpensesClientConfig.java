@@ -36,7 +36,7 @@ public class ExpensesClientConfig {
 		ObjectMapper customMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
 				.registerModule(new ParameterNamesModule())
 				.registerModule(new Jdk8Module())
-				.registerModule(new JavaTimeModule()) // new module, NOT JSR310Module
+				.registerModule(new JavaTimeModule())
 				.registerModule(new Jackson2HalModule());
 
 		return customMapper;
