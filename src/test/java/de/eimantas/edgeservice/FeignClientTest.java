@@ -1,16 +1,28 @@
 package de.eimantas.edgeservice;
 
+import de.eimantas.edgeservice.Utils.SecurityUtils;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.client.OverviewClient;
 import de.eimantas.edgeservice.dto.AccountOverView;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.idm.RealmRepresentation;
+import org.keycloak.util.TokenUtil;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +38,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,9 +52,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
@@ -105,38 +125,10 @@ public class FeignClientTest {
 
 
     @Test
-    @Ignore
     public void clientConnects() {
-       ResponseEntity response  =  client.getUserExpenses();
+       ResponseEntity response  =  client.getAllExpenses();
         assertNotNull(response);
         logger.info(response.toString());
-
-
-    }
-
-
-    @Test
-    @Ignore
-    public void getToken() throws Exception {
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "password");
-        params.add("client_id", "0oaepwz9ykeNaSuWK0h7");
-        params.add("username", "eimyss@gmail.com");
-        params.add("password", "rasas");
-
-        ResultActions result
-                = mockMvc.perform(post("/oauth/token")
-                .params(params)
-                .with(httpBasic("0oaepwz9ykeNaSuWK0h7","secret"))
-                .accept("application/json;charset=UTF-8"))
-                .andExpect(status().isOk());
-
-
-        String resultString = result.andReturn().getResponse().getContentAsString();
-
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        logger.info(jsonParser.parseMap(resultString).get("access_token").toString());
 
 
     }
@@ -227,10 +219,7 @@ public class FeignClientTest {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 Authentication authentication = securityContext.getAuthentication();
 
-                if (authentication != null && authentication.getDetails() instanceof KeycloakAuthenticationToken) {
-                    KeycloakAuthenticationToken details = (KeycloakAuthenticationToken) authentication.getDetails();
-                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE,  ((KeycloakAuthenticationToken) authentication).getAccount().getKeycloakSecurityContext().getTokenString()));
-                }
+                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
             }
         }
     }
@@ -242,4 +231,6 @@ public class FeignClientTest {
         this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
     }
+
+
 }
