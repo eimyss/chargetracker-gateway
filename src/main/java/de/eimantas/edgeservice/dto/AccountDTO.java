@@ -1,8 +1,10 @@
 package de.eimantas.edgeservice.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class AccountDTO {
+
 
         private Long id;
         private LocalDate createDate;

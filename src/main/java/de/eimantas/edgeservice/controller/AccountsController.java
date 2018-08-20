@@ -64,7 +64,7 @@ public class AccountsController {
     @CrossOrigin(origins = "*")
     public ResponseEntity persistExpense(@RequestBody AccountDTO account) {
         logger.info("saving account : " + account.toString());
-        accountsClient.postExpense(account);
+        accountsClient.postAccount(account);
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
     }

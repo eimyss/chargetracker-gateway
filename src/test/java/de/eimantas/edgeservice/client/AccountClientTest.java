@@ -2,12 +2,11 @@ package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
-import de.eimantas.edgeservice.dto.ExpenseDTO;
+import de.eimantas.edgeservice.dto.*;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -38,11 +37,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.*;
+import java.util.List;
 
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -52,7 +51,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @DirtiesContext
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.DEFAULT)
-public class ExpensesClientTest {
+public class AccountClientTest {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -60,7 +59,7 @@ public class ExpensesClientTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ExpensesClient client;
+    private AccountsClient client;
 
 
     @SuppressWarnings("rawtypes")
@@ -68,7 +67,7 @@ public class ExpensesClientTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
+    private AccountDTO got;
 
 
     @Autowired
@@ -89,53 +88,46 @@ public class ExpensesClientTest {
 
 
     @Test
-    public void testGetAllExpenses() {
-        Collection<ExpenseDTO> response  =  client.getAllExpenses();
-        assertNotNull(response);
-        assertThat(response.size(),is(greaterThan(0)));
-        logger.info(response.toString());
+    public void testSaveAccount() throws IOException {
 
+        AccountDTO acc = new AccountDTO();
+        acc.setName("uploaded");
+        acc.setBank("test");
+        acc.setBusinessAccount(true);
+        String bookmarkJson = json(acc);
+
+        ResponseEntity<AccountDTO> response  =  client.postAccount(acc);
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        got = response.getBody();
+        assertNotNull(got.getId());
+        assertNotNull(got.getUser());
+        logger.info(got.toString());
     }
 
 
     @Test
-    public void testPopulateExpenses() {
-        ResponseEntity<String> response  =  client.populateExpenses();
+    public void testGetAllAccounts() {
+        ResponseEntity<List<AccountDTO>> response  =  client.getAccountList();
         assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertNotEquals(response.getBody(),"");
         logger.info(response.toString());
 
     }
+
 
 
 
     @Test
-    public void addClientExpense() throws IOException {
-
-        ExpenseDTO exp = new ExpenseDTO();
-        exp.setName("uploaded");
-        exp.setCategory("test");
-        exp.setBetrag(BigDecimal.TEN);
-        exp.setOrt("Mainz");
-        exp.setValid(false);
-        String bookmarkJson = json(exp);
-
-        ResponseEntity<String> response  =  client.postExpense(exp);
+    public void testGlobalOverview() {
+        ResponseEntity<AllAccountsOverViewDTO> response  =  client.getGlobalOverview();
         assertNotNull(response);
-
-        logger.info(response.toString());
-
-
-    }
-
-    @Test
-    public void testGetUserExpenses() {
-        Collection<ExpenseDTO> response  =  client.getUserExpenses();
-        assertNotNull(response);
-        assertThat(response.size(),is(greaterThan(0)));
+        assertNotNull(response.getBody());
+        assertNotEquals(response.getBody(),"");
         logger.info(response.toString());
 
     }
-
 
 
 

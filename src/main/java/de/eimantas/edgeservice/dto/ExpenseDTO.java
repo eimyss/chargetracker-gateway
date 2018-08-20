@@ -21,6 +21,7 @@ public class ExpenseDTO {
         Long userId;
         private Instant createDate;
         private boolean expensed;
+        private boolean valid;
         private boolean expensable;
         private boolean periodic;
         Long accountId;

@@ -1,6 +1,9 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.dto.AccountDTO;
+import de.eimantas.edgeservice.dto.AccountOverView;
+import de.eimantas.edgeservice.dto.AccountOverViewDTO;
+import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,17 +17,17 @@ import java.util.List;
 public interface AccountsClient {
 
 	@GetMapping("/account/overview/{id}")
-	ResponseEntity readAccountOverview( @PathVariable(name = "id") long id);
+	ResponseEntity<AccountOverView> readAccountOverview(@PathVariable(name = "id") long id);
 
     @GetMapping("/account/list")
     ResponseEntity<List<AccountDTO>> getAccountList();
 
 	@GetMapping("/account/global-overview")
-	ResponseEntity getGlobalOverview();
+	ResponseEntity<AllAccountsOverViewDTO>  getGlobalOverview();
 
 	@GetMapping("/account/overview/expenses/{id}")
-	ResponseEntity getExpensesOverview(@PathVariable(name = "id") long id);
+	ResponseEntity<AccountOverViewDTO> getExpensesOverview(@PathVariable(name = "id") long id);
 
 	@PostMapping("/account/save")
-	ResponseEntity postExpense(@RequestBody AccountDTO account);
+	ResponseEntity<AccountDTO> postAccount(@RequestBody AccountDTO account);
 }
