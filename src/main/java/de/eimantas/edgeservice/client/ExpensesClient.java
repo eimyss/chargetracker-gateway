@@ -27,6 +27,7 @@ public interface ExpensesClient {
 	ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable(name = "id") long id);
 
 	@GetMapping("/expense/get/all")
+
 	Collection<ExpenseDTO> getAllExpenses();
 
 	@GetMapping("/expense/user-expenses")

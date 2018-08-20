@@ -37,7 +37,8 @@ public class AccountsClientConfig {
 				.registerModule(new ParameterNamesModule())
 				.registerModule(new Jdk8Module())
 				.registerModule(new JavaTimeModule())
-				.registerModule(new Jackson2HalModule());;
+				.registerModule(new Jackson2HalModule());
+
 
 		return customMapper;
 	}

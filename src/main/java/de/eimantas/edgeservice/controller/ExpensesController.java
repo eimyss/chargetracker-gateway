@@ -22,9 +22,10 @@ public class ExpensesController {
 		this.expensesClient = expensesClient;
 	}
 
-	@HystrixCommand(fallbackMethod = "fallback")
+	//@HystrixCommand(fallbackMethod = "fallback")
 	@GetMapping("/expenses/all")
 	@CrossOrigin(origins = "*")
+
 	public Collection<ExpenseDTO> openExpenses() {
 		logger.info("edge all expenses request");
 		Collection<ExpenseDTO> expenses = expensesClient.getAllExpenses();

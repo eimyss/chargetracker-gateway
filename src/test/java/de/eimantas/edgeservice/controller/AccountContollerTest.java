@@ -5,6 +5,7 @@ import de.eimantas.edgeservice.Utils.SecurityUtils;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.client.OverviewClient;
 import de.eimantas.edgeservice.dto.AccountOverView;
+import de.eimantas.edgeservice.dto.AccountOverViewDTO;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -143,11 +144,11 @@ public class AccountContollerTest {
     @Ignore
     public void clientOverviewConnects() {
 
-        AccountOverView response = overviewClient.readOverview(482);
+        AccountOverViewDTO response = overviewClient.readOverview(482);
 
         assertNotNull(response);
         assertNotNull(response.getTotal());
-        assertNotNull(response.getRefAccount());
+        assertNotNull(response.getRefAccountId());
         logger.info("response: " + response.toString());
 
 

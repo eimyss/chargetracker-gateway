@@ -1,21 +1,26 @@
 package de.eimantas.edgeservice.dto;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+
 public class AccountOverView {
 
 
+
     private Long id;
-    @JsonProperty("refAccount")
-    private AccountDTO refAccount;
+    private Long refAccountId;
     private BigDecimal total;
     private boolean active;
     private int countExpenses;
