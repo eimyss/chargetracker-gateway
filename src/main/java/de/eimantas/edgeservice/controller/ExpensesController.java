@@ -36,9 +36,9 @@ public class ExpensesController {
 
     @GetMapping("/expenses/search")
     @CrossOrigin(origins = "*")
-    public ResponseEntity searchExpense(@RequestParam("name") String name) {
+    public  Collection<ExpenseDTO> searchExpense(@RequestParam("name") String name) {
         logger.info("edge search expenses requiest with string: " + name);
-        ResponseEntity antwort = expensesClient.searchExpenses(name);
+        Collection<ExpenseDTO> antwort = expensesClient.searchExpenses(name);
         return antwort;
     }
 
@@ -65,9 +65,10 @@ public class ExpensesController {
 
 	@GetMapping("/expense/get/{id}")
 	@CrossOrigin(origins = "*")
-	public ResponseEntity getExpenseById(@PathVariable long id) {
+	public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable long id) {
 		logger.info("one expense request");
-		return new ResponseEntity(expensesClient.getExpenseById(id), HttpStatus.OK);
+		ResponseEntity<ExpenseDTO> response = expensesClient.getExpenseById(id);
+		return response;
 	}
 
 

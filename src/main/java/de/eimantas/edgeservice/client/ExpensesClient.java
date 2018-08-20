@@ -12,13 +12,13 @@ import java.util.List;
 public interface ExpensesClient {
 
 	@GetMapping("/expense/get/{id}")
-	ResponseEntity getExpenseById(@PathVariable(name = "id") long id);
+	ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable(name = "id") long id);
 
     @PostMapping("/expense/add")
     ResponseEntity<String> postExpense(@RequestBody ExpenseDTO expense);
 
 	@GetMapping("/expenses/search")
-	ResponseEntity searchExpenses(@RequestParam(name ="name") String name);
+	Collection<ExpenseDTO> searchExpenses(@RequestParam(name ="name") String name);
 
 	@GetMapping("/expense/populate")
 	ResponseEntity<String> populateExpenses();
