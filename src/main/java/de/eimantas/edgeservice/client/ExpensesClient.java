@@ -33,6 +33,9 @@ public interface ExpensesClient {
 	@GetMapping("/expense/user-expenses")
 	Collection<ExpenseDTO> getUserExpenses();
 
+	@GetMapping("/actuator")
+	ResponseEntity<Object> getServerInfo();
+
 
 
 

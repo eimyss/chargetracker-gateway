@@ -1,6 +1,7 @@
 package de.eimantas.edgeservice.controller;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
+
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @RestController
 public class ExpensesController {
@@ -29,6 +35,7 @@ public class ExpensesController {
 	public Collection<ExpenseDTO> openExpenses() {
 		logger.info("edge all expenses request");
 		Collection<ExpenseDTO> expenses = expensesClient.getAllExpenses();
+		logger.info("got response: " + expenses.toString());
 		return expenses;
 	}
 
@@ -89,6 +96,50 @@ public class ExpensesController {
 		return ResponseEntity.ok("done");
 	}
 
+
+	@GetMapping("/expenses/backend/keys")
+	@CrossOrigin(origins = "*")
+	public Collection<String> getInfoKeys() {
+		logger.info("edge get Information keys for backend");
+
+		ResponseEntity<Object> response  =  expensesClient.getServerInfo();
+		logger.info("response : " + response.toString());
+		logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
+		LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
+		Set<String> keys = links.keySet();
+
+		logger.info("got keys size: " + keys.size());
+
+		return keys;
+	}
+
+
+	@GetMapping("/expenses/backend/keys/{key}")
+	@CrossOrigin(origins = "*")
+	public ResponseEntity<String> getInfoKeys(@PathVariable String key) throws IOException {
+		logger.info("edge get Information for backend in key: " + key);
+
+		ResponseEntity<Object> response  =  expensesClient.getServerInfo();
+		logger.info("response : " + response.toString());
+		logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
+		LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
+
+
+		LinkedHashMap values = (LinkedHashMap) links.get(key);
+
+		if (values == null) {
+			logger.info("key: " + key + " is not found in actuator");
+			return new ResponseEntity(HttpStatus.BAD_REQUEST);
+		}
+
+		String url = (String) values.get("href");
+		logger.info("value of href: " + url);
+
+		String content = RequestHelper.getInfoFromUrl(url);
+		logger.info("content of url: " + content);
+
+		return new ResponseEntity<String>(content, HttpStatus.OK);
+	}
 
 
 	public ResponseEntity fallback(Throwable e) {

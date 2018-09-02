@@ -1,6 +1,7 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
+import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
@@ -38,6 +39,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.*;
@@ -105,6 +108,51 @@ public class ExpensesClientTest {
         logger.info(response.toString());
 
     }
+
+
+    @Test
+    public void testServerInfoLinks() {
+        ResponseEntity<Object> response  =  client.getServerInfo();
+        assertNotNull(response);
+        logger.info("response : " + response.toString());
+        assertNotNull(response.getBody());
+        assertNotNull ( ((LinkedHashMap) response.getBody()).get("_links"));
+        logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
+
+    }
+
+
+    @Test
+    public void getActuallInfo() throws IOException {
+        ResponseEntity<Object> response  =  client.getServerInfo();
+        assertNotNull(response);
+        logger.info("response : " + response.toString());
+        assertNotNull(response.getBody());
+        assertNotNull ( ((LinkedHashMap) response.getBody()).get("_links"));
+        logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
+
+       LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
+
+       assertNotNull(links);
+       Set<String> keys = links.keySet();
+        assertNotNull(keys);
+
+        LinkedHashMap values = (LinkedHashMap) links.get("info");
+        assertNotNull(values);
+
+        String url = (String) values.get("href");
+        assertNotNull(url);
+        logger.info("value of href: " + url);
+
+        String content = RequestHelper.getInfoFromUrl(url);
+
+        assertNotNull(content);
+        logger.info("content of url: " + content);
+
+    }
+
+
+
 
 
 
