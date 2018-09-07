@@ -3,6 +3,7 @@ package de.eimantas.edgeservice.client;
 import de.eimantas.edgeservice.EdgeServiceApplication;
 import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
+import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -37,10 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.*;
@@ -102,6 +100,7 @@ public class ExpensesClientTest {
 
 
     @Test
+    @Ignore
     public void testPopulateExpenses() {
         ResponseEntity<String> response  =  client.populateExpenses();
         assertNotNull(response);
@@ -160,11 +159,12 @@ public class ExpensesClientTest {
     public void addClientExpense() throws IOException {
 
         ExpenseDTO exp = new ExpenseDTO();
-        exp.setName("uploaded");
-        exp.setCategory("test");
-        exp.setBetrag(BigDecimal.TEN);
-        exp.setOrt("Mainz");
-        exp.setValid(false);
+        exp.setName("Integration");
+        exp.setCategory("STEUER");
+        exp.setBetrag(BigDecimal.valueOf(50));
+        exp.setOrt("Intellij");
+        exp.setAccountId(2L);
+        exp.setValid(true);
         String bookmarkJson = json(exp);
 
         ResponseEntity<String> response  =  client.postExpense(exp);
@@ -184,6 +184,26 @@ public class ExpensesClientTest {
 
     }
 
+
+    @Test
+    public void testGetExpensesByAccountId() {
+        ResponseEntity<List<ExpenseDTO>> response  =  client.getExpensesForAccount(2);
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertThat(response.getBody().size(),is(greaterThan(0)));
+        logger.info(response.toString());
+
+    }
+
+
+    @Test
+    public void getGetExpenseTypes() {
+        Collection<ExpenseCategory> response  =  client.getExpenseTypes();
+        assertNotNull(response);
+        assertThat(response.size(),is(greaterThan(0)));
+        logger.info(response.toString());
+
+    }
 
 
 

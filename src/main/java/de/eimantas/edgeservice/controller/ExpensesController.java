@@ -3,6 +3,7 @@ package de.eimantas.edgeservice.controller;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.client.ExpensesClient;
+import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,14 @@ public class ExpensesController {
 	}
 
 
+	@GetMapping("/expenses/types")
+	@CrossOrigin(origins = "*")
+	public Collection<ExpenseCategory> getExpensesTypes() {
+		logger.info("edge get expenses types");
+		Collection<ExpenseCategory> response = expensesClient.getExpenseTypes();
+		return response;
+	}
+
 	@GetMapping("/expenses/backend/keys")
 	@CrossOrigin(origins = "*")
 	public Collection<String> getInfoKeys() {
@@ -140,6 +149,9 @@ public class ExpensesController {
 
 		return new ResponseEntity<String>(content, HttpStatus.OK);
 	}
+
+
+
 
 
 	public ResponseEntity fallback(Throwable e) {

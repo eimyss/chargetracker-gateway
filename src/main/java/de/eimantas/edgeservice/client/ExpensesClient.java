@@ -1,5 +1,6 @@
 package de.eimantas.edgeservice.client;
 
+import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,9 @@ public interface ExpensesClient {
 
 	@GetMapping("/actuator")
 	ResponseEntity<Object> getServerInfo();
+
+	@GetMapping("/expense/types")
+	Collection<ExpenseCategory> getExpenseTypes();
 
 
 

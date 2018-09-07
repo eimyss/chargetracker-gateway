@@ -112,6 +112,7 @@ public class AccountClientTest {
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertNotEquals(response.getBody(),"");
+        assertThat(response.getBody().size(),is(greaterThan(0)));
         logger.info(response.toString());
 
     }
