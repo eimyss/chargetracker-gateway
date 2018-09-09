@@ -51,12 +51,12 @@ public class AccountsController {
         return expenses;
     }
 
-    @HystrixCommand(fallbackMethod = "fallback")
+   // @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/account/expenses/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity getExpensesOverview(@PathVariable long id) {
+    public ResponseEntity<AccountOverViewDTO>  getExpensesOverview(@PathVariable long id) {
         logger.info("edge expenses request");
-        ResponseEntity expenses = accountsClient.getExpensesOverview(id);
+        ResponseEntity<AccountOverViewDTO>  expenses = accountsClient.getExpensesOverview(id);
         logger.info("account list response: " + expenses.toString());
         return expenses;
     }
