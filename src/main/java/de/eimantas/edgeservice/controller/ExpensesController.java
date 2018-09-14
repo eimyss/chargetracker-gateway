@@ -80,6 +80,15 @@ public class ExpensesController {
 	}
 
 
+	@GetMapping("/expense/import/{id}")
+	@CrossOrigin(origins = "*")
+	public Collection<ExpenseDTO> importExpensesForAccount(@PathVariable long id) {
+		logger.info("import expense request");
+		Collection<ExpenseDTO> response = expensesClient.importExpenses(id);
+		return response;
+	}
+
+
 	@GetMapping("/expenses/user")
 	@CrossOrigin(origins = "*")
 	public Collection<ExpenseDTO> getUserExpenses() {
