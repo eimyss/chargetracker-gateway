@@ -1,16 +1,13 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
-import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
-import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -23,7 +20,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
@@ -38,13 +34,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -54,7 +49,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @DirtiesContext
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.DEFAULT)
-public class ExpensesClientTest {
+public class PreFilledExpensesClientTest {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -70,7 +65,7 @@ public class ExpensesClientTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
+    private ArrayList<ExpenseDTO> dtos;
 
 
     @Autowired
@@ -85,6 +80,13 @@ public class ExpensesClientTest {
     @Before
     public void setup() throws Exception {
         logger.info("setting up appllication");
+
+        Collection<ExpenseDTO> response = client.getAllExpenses();
+        assertNotNull(response);
+        assertThat(response.size(), is(greaterThan(0)));
+        dtos = new ArrayList<>(response);
+        logger.info(response.toString());
+
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
     }
@@ -92,119 +94,16 @@ public class ExpensesClientTest {
 
     @Test
     public void testGetAllExpenses() {
-        Collection<ExpenseDTO> response  =  client.getAllExpenses();
-        assertNotNull(response);
-        assertThat(response.size(),is(greaterThan(0)));
-        logger.info(response.toString());
 
-    }
-
-
-    @Test
-    @Ignore
-    public void testPopulateExpenses() {
-        ResponseEntity<String> response  =  client.populateExpenses();
+        String name= "updated";
+        ExpenseDTO dto = dtos.get(0);
+        dto.setName(name);
+        ExpenseDTO response = client.updateExpense(dto);
         assertNotNull(response);
         logger.info(response.toString());
+        Assertions.assertThat(response.getName()).isEqualTo(name);
 
     }
-
-
-    @Test
-    public void testServerInfoLinks() {
-        ResponseEntity<Object> response  =  client.getServerInfo();
-        assertNotNull(response);
-        logger.info("response : " + response.toString());
-        assertNotNull(response.getBody());
-        assertNotNull ( ((LinkedHashMap) response.getBody()).get("_links"));
-        logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
-
-    }
-
-
-    @Test
-    public void getActuallInfo() throws IOException {
-        ResponseEntity<Object> response  =  client.getServerInfo();
-        assertNotNull(response);
-        logger.info("response : " + response.toString());
-        assertNotNull(response.getBody());
-        assertNotNull ( ((LinkedHashMap) response.getBody()).get("_links"));
-        logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
-
-       LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
-
-       assertNotNull(links);
-       Set<String> keys = links.keySet();
-        assertNotNull(keys);
-
-        LinkedHashMap values = (LinkedHashMap) links.get("info");
-        assertNotNull(values);
-
-        String url = (String) values.get("href");
-        assertNotNull(url);
-        logger.info("value of href: " + url);
-
-        String content = RequestHelper.getInfoFromUrl(url);
-
-        assertNotNull(content);
-        logger.info("content of url: " + content);
-
-    }
-
-
-
-
-
-
-    @Test
-    public void addClientExpense() throws IOException {
-
-        ExpenseDTO exp = new ExpenseDTO();
-        exp.setName("Integration");
-        exp.setCategory("STEUER");
-        exp.setBetrag(BigDecimal.valueOf(50));
-        exp.setOrt("Intellij");
-        exp.setAccountId(2L);
-        exp.setValid(true);
-        String bookmarkJson = json(exp);
-
-        ExpenseDTO response  =  client.postExpense(exp);
-        assertNotNull(response);
-        logger.info(response.toString());
-        Assertions.assertThat(response.getId()).isNotNull();
-
-    }
-
-    @Test
-    public void testGetUserExpenses() {
-        Collection<ExpenseDTO> response  =  client.getUserExpenses();
-        assertNotNull(response);
-        assertThat(response.size(),is(greaterThan(0)));
-        logger.info(response.toString());
-
-    }
-
-
-    @Test
-    public void testGetExpensesByAccountId() {
-        ResponseEntity<List<ExpenseDTO>> response  =  client.getExpensesForAccount(2);
-        assertNotNull(response);
-        assertNotNull(response.getBody());
-        assertThat(response.getBody().size(),is(greaterThan(0)));
-        logger.info(response.toString());
-
-    }
-
-
-    @Test
-    public void getGetExpenseTypes() {
-        Collection<ExpenseCategory> response  =  client.getExpenseTypes();
-        assertNotNull(response);
-        assertThat(response.size(),is(greaterThan(0)));
-        logger.info(response.toString());
-
-    }
-
 
 
     @Configuration
@@ -229,7 +128,7 @@ public class ExpensesClientTest {
                 SecurityContext securityContext = SecurityContextHolder.getContext();
                 Authentication authentication = securityContext.getAuthentication();
 
-                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
+                template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
 
             }
         }

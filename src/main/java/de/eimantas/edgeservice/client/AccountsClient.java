@@ -7,10 +7,7 @@ import de.eimantas.edgeservice.dto.AccountOverViewDTO;
 import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,10 +23,12 @@ public interface AccountsClient {
 	@GetMapping("/account/global-overview")
 	ResponseEntity<AllAccountsOverViewDTO>  getGlobalOverview();
 
-
 	@GetMapping("/account/overview/expenses/{id}")
 	ResponseEntity<AccountOverViewDTO> getExpensesOverview(@PathVariable(name = "id") long id);
 
 	@PostMapping("/account/save")
 	ResponseEntity<AccountDTO> postAccount(@RequestBody AccountDTO account);
+
+	@PutMapping("/account/save")
+	ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO account);
 }

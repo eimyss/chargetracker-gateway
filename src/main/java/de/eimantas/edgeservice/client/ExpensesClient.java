@@ -16,7 +16,10 @@ public interface ExpensesClient {
 	ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable(name = "id") long id);
 
     @PostMapping("/expense/add")
-    ResponseEntity<String> postExpense(@RequestBody ExpenseDTO expense);
+	ExpenseDTO postExpense(@RequestBody ExpenseDTO expense);
+
+	@PutMapping("/expense/add")
+	ExpenseDTO updateExpense(@RequestBody ExpenseDTO expense);
 
 	@GetMapping("/expenses/search")
 	Collection<ExpenseDTO> searchExpenses(@RequestParam(name ="name") String name);

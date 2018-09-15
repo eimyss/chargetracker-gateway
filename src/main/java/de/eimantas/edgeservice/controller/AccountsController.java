@@ -1,6 +1,5 @@
 package de.eimantas.edgeservice.controller;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import de.eimantas.edgeservice.client.AccountsClient;
 import de.eimantas.edgeservice.dto.AccountDTO;
 import de.eimantas.edgeservice.dto.AccountOverViewDTO;
@@ -17,19 +16,19 @@ import java.util.List;
 public class AccountsController {
 
 
-	private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private AccountsClient accountsClient;
+    @Autowired
+    private AccountsClient accountsClient;
 
-	@GetMapping("/account/list")
-	@CrossOrigin(origins = "*")
-	public ResponseEntity<List<AccountDTO>> getAccountList() {
-		logger.info("edge expenses request");
+    @GetMapping("/account/list")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<List<AccountDTO>> getAccountList() {
+        logger.info("edge expenses request");
         ResponseEntity<List<AccountDTO>> expenses = accountsClient.getAccountList();
-		logger.info("account list response: " + expenses.toString());
-		return expenses;
-	}
+        logger.info("account list response: " + expenses.toString());
+        return expenses;
+    }
 
 
     @GetMapping("/account/overview/{id}")
@@ -41,7 +40,7 @@ public class AccountsController {
         return overview;
     }
 
- //   @HystrixCommand(fallbackMethod = "fallback")
+    //   @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/account/global")
     @CrossOrigin(origins = "*")
     public ResponseEntity<AllAccountsOverViewDTO> getGlobalOverview() {
@@ -51,29 +50,40 @@ public class AccountsController {
         return expenses;
     }
 
-   // @HystrixCommand(fallbackMethod = "fallback")
+    // @HystrixCommand(fallbackMethod = "fallback")
     @GetMapping("/account/expenses/{id}")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<AccountOverViewDTO>  getExpensesOverview(@PathVariable long id) {
+    public ResponseEntity<AccountOverViewDTO> getExpensesOverview(@PathVariable long id) {
         logger.info("edge expenses request");
-        ResponseEntity<AccountOverViewDTO>  expenses = accountsClient.getExpensesOverview(id);
+        ResponseEntity<AccountOverViewDTO> expenses = accountsClient.getExpensesOverview(id);
         logger.info("account list response: " + expenses.toString());
         return expenses;
     }
 
     @PostMapping("/account/save")
     @CrossOrigin(origins = "*")
-    public ResponseEntity persistExpense(@RequestBody AccountDTO account) {
+    public ResponseEntity persistAccount(@RequestBody AccountDTO account) {
         logger.info("saving account : " + account.toString());
-        ResponseEntity<AccountDTO> response=  accountsClient.postAccount(account);
+        ResponseEntity<AccountDTO> response = accountsClient.postAccount(account);
         return response;
 
     }
 
 
-	public ResponseEntity fallback(Throwable e) {
-		logger.warn("faLLING BACK on get expenses");
+    @PutMapping("/account/save")
+    @CrossOrigin(origins = "*")
+    public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO account) {
+        logger.info("updating account : " + account.toString());
+        ResponseEntity<AccountDTO> response = accountsClient.postAccount(account);
+        logger.info("updated : " + response.getBody().toString());
+        return response;
+
+    }
+
+
+    public ResponseEntity fallback(Throwable e) {
+        logger.warn("faLLING BACK on get expenses");
         e.printStackTrace();
         return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    }
 }
