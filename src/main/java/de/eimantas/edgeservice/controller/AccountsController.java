@@ -84,7 +84,7 @@ public class AccountsController {
     @CrossOrigin(origins = "*")
     public ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO account) {
         logger.info("updating account : " + account.toString());
-        ResponseEntity<AccountDTO> response = accountsClient.postAccount(account);
+        ResponseEntity<AccountDTO> response = accountsClient.updateAccount(account);
         logger.info("updated : " + response.getBody().toString());
         return response;
 
