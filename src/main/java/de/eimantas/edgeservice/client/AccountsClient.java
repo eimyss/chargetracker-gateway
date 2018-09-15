@@ -17,7 +17,10 @@ public interface AccountsClient {
 	@GetMapping("/account/overview/{id}")
 	ResponseEntity<AccountOverViewDTO> readAccountOverview(@PathVariable(name = "id") long id);
 
-    @GetMapping("/account/list")
+	@GetMapping("/account/get/{id}")
+	AccountDTO getAccountById(@PathVariable(name = "id") long id);
+
+	@GetMapping("/account/list")
     ResponseEntity<List<AccountDTO>> getAccountList();
 
 	@GetMapping("/account/global-overview")

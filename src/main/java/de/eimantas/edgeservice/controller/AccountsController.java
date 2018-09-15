@@ -60,6 +60,16 @@ public class AccountsController {
         return expenses;
     }
 
+    @GetMapping("/account/get/{id}")
+    @CrossOrigin(origins = "*")
+    public AccountDTO getAccountById(@PathVariable long id) {
+        logger.info("edge accoung get request for id: " + id);
+        AccountDTO account = accountsClient.getAccountById(id);
+        logger.info("account id response: " + account.toString());
+        return account;
+    }
+
+
     @PostMapping("/account/save")
     @CrossOrigin(origins = "*")
     public ResponseEntity persistAccount(@RequestBody AccountDTO account) {
