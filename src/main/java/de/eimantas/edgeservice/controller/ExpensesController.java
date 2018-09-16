@@ -36,7 +36,7 @@ public class ExpensesController {
     public Collection<ExpenseDTO> openExpenses() {
         logger.info("edge all expenses request");
         Collection<ExpenseDTO> expenses = expensesClient.getAllExpenses();
-        logger.info("got response: " + expenses.toString());
+        logger.info("got response with size: " + expenses.size());
         return expenses;
     }
 
@@ -46,6 +46,7 @@ public class ExpensesController {
     public Collection<ExpenseDTO> searchExpense(@RequestParam("name") String name) {
         logger.info("edge search expenses requiest with string: " + name);
         Collection<ExpenseDTO> antwort = expensesClient.searchExpenses(name);
+        logger.info("expenses count: " + antwort.size());
         return antwort;
     }
 
@@ -95,7 +96,7 @@ public class ExpensesController {
     public ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable long id) {
         logger.info("list expense request for account id " + id);
         ResponseEntity<List<ExpenseDTO>> expenses = expensesClient.getExpensesForAccount(id);
-        logger.info("returning " + expenses.toString() + " expenses");
+        logger.info("returning " + expenses.getBody().size() + " expenses");
         return expenses;
     }
 
@@ -123,6 +124,7 @@ public class ExpensesController {
     public Collection<ExpenseDTO> getUserExpenses() {
         logger.info("edge get user expenses");
         Collection<ExpenseDTO> response = expensesClient.getUserExpenses();
+        logger.info("found expenses count: " + response.size());
         return response;
     }
 
