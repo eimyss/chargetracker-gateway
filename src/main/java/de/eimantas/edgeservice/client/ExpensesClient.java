@@ -23,7 +23,7 @@ public interface ExpensesClient {
 	@PutMapping("/expense/add")
 	ExpenseDTO updateExpense(@RequestBody ExpenseDTO expense);
 
-	@GetMapping("/expenses/search")
+	@GetMapping("/expense/search")
 	Collection<ExpenseDTO> searchExpenses(@RequestParam(name ="name") String name);
 
 	@GetMapping("/expense/populate")
