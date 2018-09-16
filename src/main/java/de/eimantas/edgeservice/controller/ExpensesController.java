@@ -2,18 +2,21 @@ package de.eimantas.edgeservice.controller;
 
 import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.client.ExpensesClient;
+import de.eimantas.edgeservice.controller.expcetions.BadRequestException;
 import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 public class ExpensesController {
@@ -46,6 +49,26 @@ public class ExpensesController {
         return antwort;
     }
 
+
+
+    @GetMapping(value = "/expenses/get/period", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin(origins = "*")
+    public Collection<ExpenseDTO> getExpensesInPeriod(@RequestParam("from") @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, @RequestParam("to") @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate) throws BadRequestException {
+
+        if (fromDate == null || toDate == null)
+            throw new BadRequestException("From and To date cannot be null");
+
+        logger.info("getting expenses in period from " + fromDate.toString() + " to " + toDate.toString());
+        SimpleDateFormat formatted = new SimpleDateFormat("yyyy-MM-dd");
+
+        Collection<ExpenseDTO> expenses = expensesClient.getExpensesInPeriod(formatted.format(fromDate),formatted.format(toDate));
+
+        logger.info("found: '" + expenses.size() + "' expenses");
+
+        return expenses;
+
+
+    }
 
     @PostMapping("/save")
     @CrossOrigin(origins = "*")

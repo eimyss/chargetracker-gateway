@@ -22,6 +22,7 @@ public class ExpenseDTO {
         private String purpose;
         Long userId;
         private Instant createDate;
+        private LocalDate updateDate;
         private LocalDate bookingDate;
         private boolean expensed;
         private boolean expensable;

@@ -39,6 +39,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.*;
 
 import static org.hamcrest.Matchers.is;
@@ -93,6 +97,26 @@ public class ExpensesClientTest {
     @Test
     public void testGetAllExpenses() {
         Collection<ExpenseDTO> response  =  client.getAllExpenses();
+        assertNotNull(response);
+        assertThat(response.size(),is(greaterThan(0)));
+        logger.info(response.toString());
+
+    }
+
+
+    @Test
+    public void testGetExpensesInPeriod() {
+
+        Date from = Date.from( LocalDate.now().minus(Period.ofMonths(3)).atStartOfDay().toInstant(ZoneOffset.UTC));
+        Date to = Date.from( LocalDate.now().plus(Period.ofMonths(3)).atStartOfDay().toInstant(ZoneOffset.UTC));
+
+        SimpleDateFormat formatted = new SimpleDateFormat("yyyy-MM-dd");
+
+        logger.info(formatted.format(from));
+        logger.info(formatted.format(to));
+
+
+        Collection<ExpenseDTO> response  =  client.getExpensesInPeriod(formatted.format(from),formatted.format(to));
         assertNotNull(response);
         assertThat(response.size(),is(greaterThan(0)));
         logger.info(response.toString());

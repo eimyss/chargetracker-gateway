@@ -3,10 +3,12 @@ package de.eimantas.edgeservice.client;
 import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @FeignClient(value = "${feign.client.config.expenses.name}", configuration = ExpensesClientConfig.class)
@@ -32,6 +34,9 @@ public interface ExpensesClient {
 
 	@GetMapping("/expense/csv/read/{id}")
 	Collection<ExpenseDTO> importExpenses(@PathVariable(name = "id") long id);
+
+	@GetMapping("/expense/get/period")
+	Collection<ExpenseDTO> getExpensesInPeriod(@RequestParam("from") String fromDate, @RequestParam("to") String toDate);
 
 	@GetMapping("/expense/get/all")
 	Collection<ExpenseDTO> getAllExpenses();
