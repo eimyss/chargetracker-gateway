@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 @Data
 public class CategoryAndAmountOverview {
 
-    private ExpenseCategory name;
-    private BigDecimal amount;
+  private ExpenseCategory name;
+  private BigDecimal amount;
 }

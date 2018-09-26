@@ -1,5 +1,6 @@
 package de.eimantas.edgeservice;
 
+import brave.sampler.Sampler;
 import feign.RequestInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,33 +27,39 @@ import java.util.Collections;
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class EdgeServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EdgeServiceApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(EdgeServiceApplication.class, args);
+  }
 
 
-	@Bean
-	public RequestContextListener requestContextListener() {
-		return new RequestContextListener();
-	}
+  @Bean
+  public RequestContextListener requestContextListener() {
+    return new RequestContextListener();
+  }
 
-	@Bean
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public FilterRegistrationBean simpleCorsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.setAllowedOrigins(Collections.singletonList("*"));
-		config.setAllowedMethods(Collections.singletonList("*"));
-		config.setAllowedHeaders(Collections.singletonList("*"));
-		source.registerCorsConfiguration("/**", config);
-		FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
-	}
+  @Bean
+  public Sampler defaultSampler() {
+    return Sampler.ALWAYS_SAMPLE;
+  }
 
-	@Bean
-	public RequestInterceptor getUserFeignClientInterceptor() {
-		return new UserFeignClientInterceptor();
-	}
+
+  @Bean
+  @SuppressWarnings( {"unchecked", "rawtypes"})
+  public FilterRegistrationBean simpleCorsFilter() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowCredentials(true);
+    config.setAllowedOrigins(Collections.singletonList("*"));
+    config.setAllowedMethods(Collections.singletonList("*"));
+    config.setAllowedHeaders(Collections.singletonList("*"));
+    source.registerCorsConfiguration("/**", config);
+    FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+    bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    return bean;
+  }
+
+  @Bean
+  public RequestInterceptor getUserFeignClientInterceptor() {
+    return new UserFeignClientInterceptor();
+  }
 }

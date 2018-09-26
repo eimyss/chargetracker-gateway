@@ -1,7 +1,6 @@
 package de.eimantas.edgeservice.dto;
 
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +17,12 @@ import java.time.Instant;
 public class AccountOverView {
 
 
-
-    private Long id;
-    private Long refAccountId;
-    private BigDecimal total;
-    private boolean active;
-    private int countExpenses;
-    private Instant createDate;
+  private Long id;
+  private Long refAccountId;
+  private BigDecimal total;
+  private boolean active;
+  private int countExpenses;
+  private Instant createDate;
 
 
 }

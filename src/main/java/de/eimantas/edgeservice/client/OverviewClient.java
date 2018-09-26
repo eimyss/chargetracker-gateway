@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "${feign.client.config.expenses.name}", configuration = OverviewClientConfig.class)
 public interface OverviewClient {
 
-	@GetMapping("/account/overview/{id}")
-    AccountOverViewDTO readOverview(@PathVariable("id") long id);
+  @GetMapping("/account/overview/{id}")
+  AccountOverViewDTO readOverview(@PathVariable("id") long id);
 }

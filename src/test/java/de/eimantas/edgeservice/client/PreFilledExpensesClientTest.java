@@ -51,96 +51,96 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @FixMethodOrder(MethodSorters.DEFAULT)
 public class PreFilledExpensesClientTest {
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    private MockMvc mockMvc;
+  private MockMvc mockMvc;
 
-    @Autowired
-    private ExpensesClient client;
-
-
-    @SuppressWarnings("rawtypes")
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-    private ArrayList<ExpenseDTO> dtos;
+  @Autowired
+  private ExpensesClient client;
 
 
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
+  @SuppressWarnings("rawtypes")
+  private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
-
-        assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        logger.info("setting up appllication");
-
-        Collection<ExpenseDTO> response = client.getAllExpenses();
-        assertNotNull(response);
-        assertThat(response.size(), is(greaterThan(0)));
-        dtos = new ArrayList<>(response);
-        logger.info(response.toString());
-
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-
-    }
+  @Autowired
+  private WebApplicationContext webApplicationContext;
+  private ArrayList<ExpenseDTO> dtos;
 
 
-    @Test
-    public void testGetAllExpenses() {
+  @Autowired
+  void setConverters(HttpMessageConverter<?>[] converters) {
 
-        String name= "updated";
-        ExpenseDTO dto = dtos.get(0);
-        dto.setName(name);
-        ExpenseDTO response = client.updateExpense(dto);
-        assertNotNull(response);
-        logger.info(response.toString());
-        Assertions.assertThat(response.getName()).isEqualTo(name);
+    this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
 
-    }
+    assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+  }
 
+  @Before
+  public void setup() throws Exception {
+    logger.info("setting up appllication");
 
-    @Configuration
-    @EnableAutoConfiguration
-    @EnableFeignClients
-    @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-    protected static class TestApplication {
+    Collection<ExpenseDTO> response = client.getAllExpenses();
+    assertNotNull(response);
+    assertThat(response.size(), is(greaterThan(0)));
+    dtos = new ArrayList<>(response);
+    logger.info(response.toString());
 
-        public static void main(String[] args) {
-            SpringApplication.run(EdgeServiceApplication.class, args);
+    this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
-        }
+  }
 
 
-        @Component
-        public class UserFeignClientInterceptor implements RequestInterceptor {
-            private static final String AUTHORIZATION_HEADER = "Authorization";
-            private static final String BEARER_TOKEN_TYPE = "Bearer";
+  @Test
+  public void testGetAllExpenses() {
 
-            @Override
-            public void apply(RequestTemplate template) {
-                SecurityContext securityContext = SecurityContextHolder.getContext();
-                Authentication authentication = securityContext.getAuthentication();
+    String name = "updated";
+    ExpenseDTO dto = dtos.get(0);
+    dto.setName(name);
+    ExpenseDTO response = client.updateExpense(dto);
+    assertNotNull(response);
+    logger.info(response.toString());
+    Assertions.assertThat(response.getName()).isEqualTo(name);
 
-                template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
+  }
 
-            }
-        }
+
+  @Configuration
+  @EnableAutoConfiguration
+  @EnableFeignClients
+  @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
+  protected static class TestApplication {
+
+    public static void main(String[] args) {
+      SpringApplication.run(EdgeServiceApplication.class, args);
+
     }
 
 
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
+    @Component
+    public class UserFeignClientInterceptor implements RequestInterceptor {
+      private static final String AUTHORIZATION_HEADER = "Authorization";
+      private static final String BEARER_TOKEN_TYPE = "Bearer";
+
+      @Override
+      public void apply(RequestTemplate template) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
+
+      }
     }
+  }
+
+
+  @SuppressWarnings("unchecked")
+  protected String json(Object o) throws IOException {
+    MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+    this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+    return mockHttpOutputMessage.getBodyAsString();
+  }
 
 
 }

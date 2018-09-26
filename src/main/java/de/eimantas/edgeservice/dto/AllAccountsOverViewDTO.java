@@ -14,19 +14,20 @@ import java.util.Map;
 @Data
 public class AllAccountsOverViewDTO {
 
-   private Map<Long, List<MonthAndAmountOverview>> overview;
+  private Map<Long, List<MonthAndAmountOverview>> overview;
 
-   int monthBack;
-   private LocalDateTime createDate;
-   private long userId;
-
-
-    List<ExpenseDTO> unexpenced;
+  int monthBack;
+  private LocalDateTime createDate;
+  private long userId;
 
 
-    public void addNotExpenced(List<ExpenseDTO> expenseDTOS) {
-        if (unexpenced == null)
-            unexpenced = new ArrayList<>();
-        unexpenced.addAll(expenseDTOS);
+  List<ExpenseDTO> unexpenced;
+
+
+  public void addNotExpenced(List<ExpenseDTO> expenseDTOS) {
+    if (unexpenced == null) {
+      unexpenced = new ArrayList<>();
     }
+    unexpenced.addAll(expenseDTOS);
+  }
 }

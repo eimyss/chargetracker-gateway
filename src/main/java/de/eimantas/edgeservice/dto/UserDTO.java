@@ -14,12 +14,12 @@ import java.time.LocalDate;
 public class UserDTO {
 
 
-        private Long id;
-        private LocalDate joindate;
-        String name;
-        private String username;
-        private String email;
-        int accountCount;
+  private Long id;
+  private LocalDate joindate;
+  String name;
+  private String username;
+  private String email;
+  int accountCount;
 
 }
 

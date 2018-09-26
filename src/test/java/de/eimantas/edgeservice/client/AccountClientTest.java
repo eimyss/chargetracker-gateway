@@ -2,7 +2,8 @@ package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
-import de.eimantas.edgeservice.dto.*;
+import de.eimantas.edgeservice.dto.AccountDTO;
+import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.Before;
@@ -34,16 +35,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
@@ -53,120 +50,117 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @FixMethodOrder(MethodSorters.DEFAULT)
 public class AccountClientTest {
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
-    private MockMvc mockMvc;
+  private MockMvc mockMvc;
 
-    @Autowired
-    private AccountsClient client;
-
-
-    @SuppressWarnings("rawtypes")
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-    private AccountDTO got;
+  @Autowired
+  private AccountsClient client;
 
 
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
+  @SuppressWarnings("rawtypes")
+  private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
-
-        assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
-    }
-
-    @Before
-    public void setup() throws Exception {
-        logger.info("setting up appllication");
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-
-    }
+  @Autowired
+  private WebApplicationContext webApplicationContext;
+  private AccountDTO got;
 
 
-    @Test
-    public void testSaveAccount() throws IOException {
+  @Autowired
+  void setConverters(HttpMessageConverter<?>[] converters) {
 
-        AccountDTO acc = new AccountDTO();
-        acc.setName("uploaded");
-        acc.setBank("test");
-        acc.setBusinessAccount(true);
-        String bookmarkJson = json(acc);
+    this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().orElse(null);
 
-        ResponseEntity<AccountDTO> response  =  client.postAccount(acc);
-        assertNotNull(response);
-        assertNotNull(response.getBody());
-        got = response.getBody();
-        assertNotNull(got.getId());
-        assertNotNull(got.getUser());
-        logger.info(got.toString());
-    }
+    assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+  }
+
+  @Before
+  public void setup() throws Exception {
+    logger.info("setting up appllication");
+    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+
+  }
 
 
-    @Test
-    public void testGetAllAccounts() {
-        ResponseEntity<List<AccountDTO>> response  =  client.getAccountList();
-        assertNotNull(response);
-        assertNotNull(response.getBody());
-        assertNotEquals(response.getBody(),"");
-        assertThat(response.getBody().size(),is(greaterThan(0)));
-        logger.info(response.toString());
+  @Test
+  public void testSaveAccount() throws IOException {
 
-    }
+    AccountDTO acc = new AccountDTO();
+    acc.setName("uploaded");
+    acc.setBank("test");
+    acc.setBusinessAccount(true);
+    String bookmarkJson = json(acc);
 
-
-
-
-    @Test
-    public void testGlobalOverview() {
-        ResponseEntity<AllAccountsOverViewDTO> response  =  client.getGlobalOverview();
-        assertNotNull(response);
-        assertNotNull(response.getBody());
-        assertNotEquals(response.getBody(),"");
-        logger.info(response.toString());
-
-    }
+    ResponseEntity<AccountDTO> response = client.postAccount(acc);
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    got = response.getBody();
+    assertNotNull(got.getId());
+    assertNotNull(got.getUser());
+    logger.info(got.toString());
+  }
 
 
+  @Test
+  public void testGetAllAccounts() {
+    ResponseEntity<List<AccountDTO>> response = client.getAccountList();
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
+    assertThat(response.getBody().size(), is(greaterThan(0)));
+    logger.info(response.toString());
 
-    @Configuration
-    @EnableAutoConfiguration
-    @EnableFeignClients
-    @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-    protected static class TestApplication {
-
-        public static void main(String[] args) {
-            SpringApplication.run(EdgeServiceApplication.class, args);
-
-        }
+  }
 
 
-        @Component
-        public class UserFeignClientInterceptor implements RequestInterceptor {
-            private static final String AUTHORIZATION_HEADER = "Authorization";
-            private static final String BEARER_TOKEN_TYPE = "Bearer";
+  @Test
+  public void testGlobalOverview() {
+    ResponseEntity<AllAccountsOverViewDTO> response = client.getGlobalOverview();
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
+    logger.info(response.toString());
 
-            @Override
-            public void apply(RequestTemplate template) {
-                SecurityContext securityContext = SecurityContextHolder.getContext();
-                Authentication authentication = securityContext.getAuthentication();
+  }
 
-                    template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
 
-            }
-        }
+  @Configuration
+  @EnableAutoConfiguration
+  @EnableFeignClients
+  @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
+  protected static class TestApplication {
+
+    public static void main(String[] args) {
+      SpringApplication.run(EdgeServiceApplication.class, args);
+
     }
 
 
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
+    @Component
+    public class UserFeignClientInterceptor implements RequestInterceptor {
+      private static final String AUTHORIZATION_HEADER = "Authorization";
+      private static final String BEARER_TOKEN_TYPE = "Bearer";
+
+      @Override
+      public void apply(RequestTemplate template) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, SecurityUtils.getOnlyToken()));
+
+      }
     }
+  }
+
+
+  @SuppressWarnings("unchecked")
+  protected String json(Object o) throws IOException {
+    MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+    this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+    return mockHttpOutputMessage.getBodyAsString();
+  }
 
 
 }

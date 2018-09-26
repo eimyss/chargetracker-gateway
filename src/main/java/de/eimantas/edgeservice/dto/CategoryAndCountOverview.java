@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class CategoryAndCountOverview {
 
-    private ExpenseCategory category;
-    private long count;
+  private ExpenseCategory category;
+  private long count;
 
 }

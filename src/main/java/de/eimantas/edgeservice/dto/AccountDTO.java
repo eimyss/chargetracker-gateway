@@ -4,7 +4,6 @@ package de.eimantas.edgeservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
 
@@ -15,16 +14,16 @@ import java.time.LocalDate;
 public class AccountDTO {
 
 
-        private Long id;
-        private LocalDate createDate;
-        private LocalDate expireDate;
-        private LocalDate updateDate;
-        private boolean active;
-        private boolean businessAccount;
-        private String bank;
-        private String name;
-        private int expensescount;
-        private UserDTO user;
+  private Long id;
+  private LocalDate createDate;
+  private LocalDate expireDate;
+  private LocalDate updateDate;
+  private boolean active;
+  private boolean businessAccount;
+  private String bank;
+  private String name;
+  private int expensescount;
+  private UserDTO user;
 
-    }
+}
 

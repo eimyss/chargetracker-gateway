@@ -1,13 +1,11 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
-import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
-import de.eimantas.edgeservice.dto.ExpenseCategory;
-import de.eimantas.edgeservice.dto.ExpenseDTO;
+import de.eimantas.edgeservice.dto.AccountDTO;
+import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -38,17 +36,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
@@ -56,7 +49,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @DirtiesContext
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.DEFAULT)
-public class ExpensesClientTest {
+public class UsersClientTest {
 
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -64,7 +57,7 @@ public class ExpensesClientTest {
   private MockMvc mockMvc;
 
   @Autowired
-  private ExpensesClient client;
+  private UsersClient client;
 
 
   @SuppressWarnings("rawtypes")
@@ -72,6 +65,7 @@ public class ExpensesClientTest {
 
   @Autowired
   private WebApplicationContext webApplicationContext;
+  private AccountDTO got;
 
 
   @Autowired
@@ -92,135 +86,27 @@ public class ExpensesClientTest {
 
 
   @Test
-  public void testGetAllExpenses() {
-    Collection<ExpenseDTO> response = client.getAllExpenses();
+  public void testGetUserById() {
+    ResponseEntity<?> response = client.getUserBykeykloackId("Keycloack-ID1-Filled");
     assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
     logger.info(response.toString());
-
   }
 
 
-  @Test
-  public void testGetExpensesInPeriod() {
 
-    Date from = Date.from(LocalDate.now().minus(Period.ofMonths(3)).atStartOfDay().toInstant(ZoneOffset.UTC));
-    Date to = Date.from(LocalDate.now().plus(Period.ofMonths(3)).atStartOfDay().toInstant(ZoneOffset.UTC));
-
-    SimpleDateFormat formatted = new SimpleDateFormat("yyyy-MM-dd");
-
-    logger.info(formatted.format(from));
-    logger.info(formatted.format(to));
-
-
-    Collection<ExpenseDTO> response = client.getExpensesInPeriod(formatted.format(from), formatted.format(to));
-    assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
-    logger.info(response.toString());
-
-  }
-
-
+  // Test user has different keycloack id than is saved to ref
   @Test
   @Ignore
-  public void testPopulateExpenses() {
-    ResponseEntity<String> response = client.populateExpenses();
-    assertNotNull(response);
-    logger.info(response.toString());
-
-  }
-
-
-  @Test
-  public void testServerInfoLinks() {
-    ResponseEntity<Object> response = client.getServerInfo();
-    assertNotNull(response);
-    logger.info("response : " + response.toString());
-    assertNotNull(response.getBody());
-    assertNotNull(((LinkedHashMap) response.getBody()).get("_links"));
-    logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
-
-  }
-
-
-  @Test
-  public void getActuallInfo() throws IOException {
-    ResponseEntity<Object> response = client.getServerInfo();
-    assertNotNull(response);
-    logger.info("response : " + response.toString());
-    assertNotNull(response.getBody());
-    assertNotNull(((LinkedHashMap) response.getBody()).get("_links"));
-    logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
-
-    LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
-
-    assertNotNull(links);
-    Set<String> keys = links.keySet();
-    assertNotNull(keys);
-
-    LinkedHashMap values = (LinkedHashMap) links.get("info");
-    assertNotNull(values);
-
-    String url = (String) values.get("href");
-    assertNotNull(url);
-    logger.info("value of href: " + url);
-
-    String content = RequestHelper.getInfoFromUrl(url);
-
-    assertNotNull(content);
-    logger.info("content of url: " + content);
-
-  }
-
-
-  @Test
-  public void addClientExpense() throws IOException {
-
-    ExpenseDTO exp = new ExpenseDTO();
-    exp.setName("Integration");
-    exp.setCategory("STEUER");
-    exp.setBetrag(BigDecimal.valueOf(50));
-    exp.setOrt("Intellij");
-    exp.setAccountId(2L);
-    exp.setValid(true);
-    String bookmarkJson = json(exp);
-
-    ExpenseDTO response = client.postExpense(exp);
-    assertNotNull(response);
-    logger.info(response.toString());
-    Assertions.assertThat(response.getId()).isNotNull();
-
-  }
-
-  @Test
-  public void testGetUserExpenses() {
-    Collection<ExpenseDTO> response = client.getUserExpenses();
-    assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
-    logger.info(response.toString());
-
-  }
-
-
-  @Test
-  public void testGetExpensesByAccountId() {
-    ResponseEntity<List<ExpenseDTO>> response = client.getExpensesForAccount(2);
+  public void testGetCurrentUser() {
+    ResponseEntity<?> response = client.getCurrentUser();
     assertNotNull(response);
     assertNotNull(response.getBody());
-    assertThat(response.getBody().size(), is(greaterThan(0)));
-    logger.info(response.toString());
-
+    logger.info(response.getBody().toString());
   }
 
 
-  @Test
-  public void getGetExpenseTypes() {
-    Collection<ExpenseCategory> response = client.getExpenseTypes();
-    assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
-    logger.info(response.toString());
-
-  }
 
 
   @Configuration
