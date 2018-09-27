@@ -25,7 +25,7 @@
                 <pattern>
                     <pattern>
                         {
-                        "serviceName": "eureka-service"
+                        "serviceName": "edge-service"
                         }
                     </pattern>
                 </pattern>

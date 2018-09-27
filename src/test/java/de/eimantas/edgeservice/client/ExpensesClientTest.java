@@ -3,11 +3,9 @@ package de.eimantas.edgeservice.client;
 import de.eimantas.edgeservice.EdgeServiceApplication;
 import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
-import de.eimantas.edgeservice.dto.ExpenseCategory;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -45,10 +43,7 @@ import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
@@ -65,6 +60,9 @@ public class ExpensesClientTest {
 
   @Autowired
   private ExpensesClient client;
+
+  @Autowired
+  private ExpensesRootlessClient rootlessClient;
 
 
   @SuppressWarnings("rawtypes")
@@ -93,9 +91,8 @@ public class ExpensesClientTest {
 
   @Test
   public void testGetAllExpenses() {
-    Collection<ExpenseDTO> response = client.getAllExpenses();
+    ResponseEntity response = client.getAllExpenses();
     assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
     logger.info(response.toString());
 
   }
@@ -113,9 +110,9 @@ public class ExpensesClientTest {
     logger.info(formatted.format(to));
 
 
-    Collection<ExpenseDTO> response = client.getExpensesInPeriod(formatted.format(from), formatted.format(to));
+    ResponseEntity<List> response = client.getExpensesInPeriod(formatted.format(from), formatted.format(to));
     assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
+    assertNotNull(response.getBody());
     logger.info(response.toString());
 
   }
@@ -124,7 +121,7 @@ public class ExpensesClientTest {
   @Test
   @Ignore
   public void testPopulateExpenses() {
-    ResponseEntity<String> response = client.populateExpenses();
+    ResponseEntity response = client.populateExpenses();
     assertNotNull(response);
     logger.info(response.toString());
 
@@ -133,7 +130,7 @@ public class ExpensesClientTest {
 
   @Test
   public void testServerInfoLinks() {
-    ResponseEntity<Object> response = client.getServerInfo();
+    ResponseEntity<Object> response = rootlessClient.getServerInfo();
     assertNotNull(response);
     logger.info("response : " + response.toString());
     assertNotNull(response.getBody());
@@ -145,7 +142,7 @@ public class ExpensesClientTest {
 
   @Test
   public void getActuallInfo() throws IOException {
-    ResponseEntity<Object> response = client.getServerInfo();
+    ResponseEntity<Object> response = rootlessClient.getServerInfo();
     assertNotNull(response);
     logger.info("response : " + response.toString());
     assertNotNull(response.getBody());
@@ -185,18 +182,18 @@ public class ExpensesClientTest {
     exp.setValid(true);
     String bookmarkJson = json(exp);
 
-    ExpenseDTO response = client.postExpense(exp);
+    ResponseEntity response = client.postExpense(exp);
     assertNotNull(response);
+    assertNotNull(response.getBody());
     logger.info(response.toString());
-    Assertions.assertThat(response.getId()).isNotNull();
 
   }
 
   @Test
   public void testGetUserExpenses() {
-    Collection<ExpenseDTO> response = client.getUserExpenses();
+    ResponseEntity<List> response = client.getUserExpenses();
     assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
+    assertNotNull(response.getBody());
     logger.info(response.toString());
 
   }
@@ -204,10 +201,9 @@ public class ExpensesClientTest {
 
   @Test
   public void testGetExpensesByAccountId() {
-    ResponseEntity<List<ExpenseDTO>> response = client.getExpensesForAccount(2);
+    ResponseEntity<List> response = client.getExpensesForAccount(1);
     assertNotNull(response);
     assertNotNull(response.getBody());
-    assertThat(response.getBody().size(), is(greaterThan(0)));
     logger.info(response.toString());
 
   }
@@ -215,9 +211,9 @@ public class ExpensesClientTest {
 
   @Test
   public void getGetExpenseTypes() {
-    Collection<ExpenseCategory> response = client.getExpenseTypes();
+    ResponseEntity<List> response = client.getExpenseTypes();
     assertNotNull(response);
-    assertThat(response.size(), is(greaterThan(0)));
+    assertNotNull(response.getBody());
     logger.info(response.toString());
 
   }

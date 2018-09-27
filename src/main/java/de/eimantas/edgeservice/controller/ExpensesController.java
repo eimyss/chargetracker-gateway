@@ -2,10 +2,13 @@ package de.eimantas.edgeservice.controller;
 
 import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.client.ExpensesClient;
+import de.eimantas.edgeservice.client.ExpensesRootlessClient;
 import de.eimantas.edgeservice.controller.expcetions.BadRequestException;
-import de.eimantas.edgeservice.dto.ExpenseCategory;
-import de.eimantas.edgeservice.dto.ExpenseDTO;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,12 +16,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
+@RequestMapping(value = "/expenses")
 public class ExpensesController {
+
   private final ExpensesClient expensesClient;
+
+  @Autowired
+  private ExpensesRootlessClient rootlessClient;
 
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -28,30 +37,61 @@ public class ExpensesController {
   }
 
   //@HystrixCommand(fallbackMethod = "fallback")
-  @GetMapping("/expenses/all")
+  @GetMapping("/all")
   @CrossOrigin(origins = "*")
 
-  public Collection<ExpenseDTO> openExpenses() {
+  public ResponseEntity<List> openExpenses() {
     logger.info("edge all expenses request");
-    Collection<ExpenseDTO> expenses = expensesClient.getAllExpenses();
-    logger.info("got response with size: " + expenses.size());
+    ResponseEntity<List> expenses = expensesClient.getAllExpenses();
+    logger.info("got response ");
     return expenses;
   }
 
 
-  @GetMapping("/expenses/search")
+  @GetMapping("/search")
   @CrossOrigin(origins = "*")
-  public Collection<ExpenseDTO> searchExpense(@RequestParam("name") String name) {
+  public ResponseEntity searchExpense(@RequestParam("name") String name) {
     logger.info("edge search expenses requiest with string: " + name);
-    Collection<ExpenseDTO> antwort = expensesClient.searchExpenses(name);
-    logger.info("expenses count: " + antwort.size());
+    ResponseEntity antwort = expensesClient.searchExpenses(name);
+    logger.info("expenses is done");
     return antwort;
   }
 
-
-  @GetMapping(value = "/expenses/get/period", produces = MediaType.APPLICATION_JSON_VALUE)
+  // @HystrixCommand(fallbackMethod = "fallback")
+  @GetMapping("/overview/{id}")
   @CrossOrigin(origins = "*")
-  public Collection<ExpenseDTO> getExpensesInPeriod(@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate, @RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) throws BadRequestException {
+  public ResponseEntity getExpensesOverview(@PathVariable long id) {
+    logger.info("edge expenses request");
+    ResponseEntity expenses = expensesClient.getExpensesOverview(id);
+    logger.info("expense overview response: " + expenses.toString());
+    return expenses;
+  }
+
+  //   @HystrixCommand(fallbackMethod = "fallback")
+  @GetMapping("/global")
+  @CrossOrigin(origins = "*")
+  public ResponseEntity getGlobalOverview(Principal principal) {
+    logger.info("edge expenses request");
+    KeycloakAuthenticationToken userAuth = (KeycloakAuthenticationToken) principal;
+    logger.info("-----------------");
+    logger.info(userAuth.getDetails().toString());
+    KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) userAuth.getPrincipal();
+    RefreshableKeycloakSecurityContext ctx = (RefreshableKeycloakSecurityContext) keycloakPrincipal.getKeycloakSecurityContext();
+    logger.info("ID: " + ctx.getToken().getSubject());
+    logger.info(userAuth.getAccount().toString());
+    logger.info(userAuth.getCredentials().toString());
+    logger.info(userAuth.getPrincipal().toString());
+    logger.info("-----------------");
+
+    ResponseEntity expenses = expensesClient.getGlobalOverview();
+    logger.info("global overview response: " + expenses.toString());
+    return expenses;
+  }
+
+
+  @GetMapping(value = "/get/period", produces = MediaType.APPLICATION_JSON_VALUE)
+  @CrossOrigin(origins = "*")
+  public ResponseEntity<List> getExpensesInPeriod(@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate, @RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) throws BadRequestException {
 
     if (fromDate == null || toDate == null) {
       throw new BadRequestException("From and To date cannot be null");
@@ -59,10 +99,8 @@ public class ExpensesController {
 
     logger.info("getting expenses in period from " + fromDate.toString() + " to " + toDate.toString());
     SimpleDateFormat formatted = new SimpleDateFormat("yyyy-MM-dd");
-
-    Collection<ExpenseDTO> expenses = expensesClient.getExpensesInPeriod(formatted.format(fromDate), formatted.format(toDate));
-
-    logger.info("found: '" + expenses.size() + "' expenses");
+    ResponseEntity<List> expenses = expensesClient.getExpensesInPeriod(formatted.format(fromDate), formatted.format(toDate));
+    logger.info("found some expenses");
 
     return expenses;
 
@@ -71,63 +109,63 @@ public class ExpensesController {
 
   @PostMapping("/save")
   @CrossOrigin(origins = "*")
-  public ExpenseDTO persistExpense(@RequestBody ExpenseDTO expense) {
+  public ResponseEntity persistExpense(@RequestBody Object expense) {
     logger.info("saving expense : " + expense.toString());
-    ExpenseDTO response = expensesClient.updateExpense(expense);
+    ResponseEntity response = expensesClient.updateExpense(expense);
     logger.info("saved : " + expense.toString());
     return response;
   }
 
   @PutMapping("/save")
   @CrossOrigin(origins = "*")
-  public ExpenseDTO updateExpense(@RequestBody ExpenseDTO expense) {
+  public ResponseEntity updateExpense(@RequestBody Object expense) {
     logger.info("updating expense : " + expense.toString());
-    ExpenseDTO response = expensesClient.updateExpense(expense);
+    ResponseEntity response = expensesClient.updateExpense(expense);
     logger.info("updated : " + expense.toString());
-    return expense;
+    return response;
 
   }
 
 
-  @GetMapping("/expense/account/{id}")
+  @GetMapping("/account/{id}")
   @CrossOrigin(origins = "*")
-  public ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable long id) {
+  public ResponseEntity<List> getExpensesForAccount(@PathVariable long id) {
     logger.info("list expense request for account id " + id);
-    ResponseEntity<List<ExpenseDTO>> expenses = expensesClient.getExpensesForAccount(id);
-    logger.info("returning " + expenses.getBody().size() + " expenses");
+    ResponseEntity<List> expenses = expensesClient.getExpensesForAccount(id);
+    logger.info("returning some expenses");
     return expenses;
   }
 
 
-  @GetMapping("/expense/get/{id}")
+  @GetMapping("/get/{id}")
   @CrossOrigin(origins = "*")
-  public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable long id) {
+  public ResponseEntity getExpenseById(@PathVariable long id) {
     logger.info("one expense request");
-    ResponseEntity<ExpenseDTO> response = expensesClient.getExpenseById(id);
+    ResponseEntity response = expensesClient.getExpenseById(id);
     return response;
   }
 
 
-  @GetMapping("/expense/import/{id}")
+  @GetMapping("/import/{id}")
   @CrossOrigin(origins = "*")
-  public Collection<ExpenseDTO> importExpensesForAccount(@PathVariable long id) {
+  public ResponseEntity importExpensesForAccount(@PathVariable long id) {
     logger.info("import expense request");
-    Collection<ExpenseDTO> response = expensesClient.importExpenses(id);
+    ResponseEntity response = expensesClient.importExpenses(id);
     return response;
   }
 
 
-  @GetMapping("/expenses/user")
+  @GetMapping("/user")
   @CrossOrigin(origins = "*")
-  public Collection<ExpenseDTO> getUserExpenses() {
+  public ResponseEntity<List> getUserExpenses() {
     logger.info("edge get user expenses");
-    Collection<ExpenseDTO> response = expensesClient.getUserExpenses();
-    logger.info("found expenses count: " + response.size());
+    ResponseEntity<List> response = expensesClient.getUserExpenses();
+    logger.info("found expenses count: ");
     return response;
   }
 
 
-  @GetMapping("/expenses/populate")
+  @GetMapping("/populate")
   @CrossOrigin(origins = "*")
   public ResponseEntity populateExpenses() {
     logger.info("edge populate expenses");
@@ -136,20 +174,20 @@ public class ExpensesController {
   }
 
 
-  @GetMapping("/expenses/types")
+  @GetMapping("/types")
   @CrossOrigin(origins = "*")
-  public Collection<ExpenseCategory> getExpensesTypes() {
+  public ResponseEntity<List> getExpensesTypes() {
     logger.info("edge get expenses types");
-    Collection<ExpenseCategory> response = expensesClient.getExpenseTypes();
+    ResponseEntity<List> response = expensesClient.getExpenseTypes();
     return response;
   }
 
-  @GetMapping("/expenses/backend/keys")
+  @GetMapping("/backend/keys")
   @CrossOrigin(origins = "*")
   public Collection<String> getInfoKeys() {
     logger.info("edge get Information keys for backend");
 
-    ResponseEntity<Object> response = expensesClient.getServerInfo();
+    ResponseEntity<Object> response = rootlessClient.getServerInfo();
     logger.info("response : " + response.toString());
     logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
     LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");
@@ -161,12 +199,12 @@ public class ExpensesController {
   }
 
 
-  @GetMapping("/expenses/backend/keys/{key}")
+  @GetMapping("/backend/keys/{key}")
   @CrossOrigin(origins = "*")
   public ResponseEntity<String> getInfoKeys(@PathVariable String key) throws IOException {
     logger.info("edge get Information for backend in key: " + key);
 
-    ResponseEntity<Object> response = expensesClient.getServerInfo();
+    ResponseEntity<Object> response = rootlessClient.getServerInfo();
     logger.info("response : " + response.toString());
     logger.info("Links: " + ((LinkedHashMap) response.getBody()).get("_links"));
     LinkedHashMap links = (LinkedHashMap) ((LinkedHashMap) response.getBody()).get("_links");

@@ -87,7 +87,7 @@ public class UsersClientTest {
 
   @Test
   public void testGetUserById() {
-    ResponseEntity<?> response = client.getUserBykeykloackId("Keycloack-ID1-Filled");
+    ResponseEntity<?> response = client.getUserBykeykloackId("ee9fb974-c2c2-45f8-b60e-c22d9f00273f");
     assertNotNull(response);
     assertNotNull(response.getBody());
     assertNotEquals(response.getBody(), "");
@@ -98,7 +98,6 @@ public class UsersClientTest {
 
   // Test user has different keycloack id than is saved to ref
   @Test
-  @Ignore
   public void testGetCurrentUser() {
     ResponseEntity<?> response = client.getCurrentUser();
     assertNotNull(response);

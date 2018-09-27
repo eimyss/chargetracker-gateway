@@ -3,7 +3,6 @@ package de.eimantas.edgeservice.client;
 import de.eimantas.edgeservice.EdgeServiceApplication;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
 import de.eimantas.edgeservice.dto.AccountDTO;
-import de.eimantas.edgeservice.dto.AllAccountsOverViewDTO;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.junit.Before;
@@ -36,6 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -93,19 +93,16 @@ public class AccountClientTest {
     acc.setBusinessAccount(true);
     String bookmarkJson = json(acc);
 
-    ResponseEntity<AccountDTO> response = client.postAccount(acc);
+    ResponseEntity response = (ResponseEntity<AccountDTO>) client.postAccount(acc);
     assertNotNull(response);
     assertNotNull(response.getBody());
-    got = response.getBody();
-    assertNotNull(got.getId());
-    assertNotNull(got.getUser());
-    logger.info(got.toString());
+    logger.info(response.toString());
   }
 
 
   @Test
   public void testGetAllAccounts() {
-    ResponseEntity<List<AccountDTO>> response = client.getAccountList();
+    ResponseEntity<List> response = client.getAccountList();
     assertNotNull(response);
     assertNotNull(response.getBody());
     assertNotEquals(response.getBody(), "");
@@ -116,14 +113,24 @@ public class AccountClientTest {
 
 
   @Test
-  public void testGlobalOverview() {
-    ResponseEntity<AllAccountsOverViewDTO> response = client.getGlobalOverview();
+  public void testGetAccountById() {
+    ResponseEntity response = client.getAccountById(1);
     assertNotNull(response);
     assertNotNull(response.getBody());
     assertNotEquals(response.getBody(), "");
     logger.info(response.toString());
 
   }
+
+  @Test
+  public void testGetAccountListIds() {
+    ResponseEntity<List> response =  client.getAccountListIds();
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
+    logger.info(response.toString());
+  }
+
 
 
   @Configuration

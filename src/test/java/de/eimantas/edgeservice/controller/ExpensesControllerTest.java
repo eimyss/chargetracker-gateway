@@ -87,7 +87,7 @@ public class ExpensesControllerTest {
   public void getBackendInfoForKey() throws Exception {
     mockMvc.perform(get("/expenses/backend/keys/info")).andExpect(status().isOk())
         .andDo(MockMvcResultHandlers.print())
-        .andExpect(jsonPath("$.build.name", is("eimantas-backend")));
+        .andExpect(jsonPath("$.build.name", is("backend-expenses")));
   }
 
   @Test

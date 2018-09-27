@@ -1,52 +1,58 @@
 package de.eimantas.edgeservice.client;
 
-import de.eimantas.edgeservice.dto.ExpenseCategory;
-import de.eimantas.edgeservice.dto.ExpenseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
-@FeignClient(value = "${feign.client.config.expenses.name}", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "${feign.client.config.expense.service}", configuration = ExpensesClientConfig.class)
+@RequestMapping(value = "/expense")
 public interface ExpensesClient {
 
-  @GetMapping("/expense/get/{id}")
-  ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable(name = "id") long id);
+  @GetMapping("/get/{id}")
+  ResponseEntity<?>  getExpenseById(@PathVariable(name = "id") long id);
 
-  @PostMapping("/expense/add")
-  ExpenseDTO postExpense(@RequestBody ExpenseDTO expense);
+  @PostMapping("/add")
+  ResponseEntity<?> postExpense(@RequestBody Object expense);
 
-  @PutMapping("/expense/add")
-  ExpenseDTO updateExpense(@RequestBody ExpenseDTO expense);
+  @PutMapping("/add")
+  ResponseEntity<?>  updateExpense(@RequestBody Object expense);
 
-  @GetMapping("/expense/search")
-  Collection<ExpenseDTO> searchExpenses(@RequestParam(name = "name") String name);
+  @GetMapping("/search")
+  ResponseEntity<List> searchExpenses(@RequestParam(name = "name") String name);
 
-  @GetMapping("/expense/populate")
-  ResponseEntity<String> populateExpenses();
+  @GetMapping("/populate")
+  ResponseEntity<List>   populateExpenses();
 
-  @GetMapping("/expense/account/{id}")
-  ResponseEntity<List<ExpenseDTO>> getExpensesForAccount(@PathVariable(name = "id") long id);
+  @GetMapping("/account/{id}")
+  ResponseEntity<List> getExpensesForAccount(@PathVariable(name = "id") long id);
 
-  @GetMapping("/expense/csv/read/{id}")
-  Collection<ExpenseDTO> importExpenses(@PathVariable(name = "id") long id);
+  @GetMapping("/csv/read/{id}")
+  ResponseEntity<List>  importExpenses(@PathVariable(name = "id") long id);
 
-  @GetMapping("/expense/get/period")
-  Collection<ExpenseDTO> getExpensesInPeriod(@RequestParam("from") String fromDate, @RequestParam("to") String toDate);
+  @GetMapping("/get/period")
+  ResponseEntity<List> getExpensesInPeriod(@RequestParam("from") String fromDate, @RequestParam("to") String toDate);
 
-  @GetMapping("/expense/get/all")
-  Collection<ExpenseDTO> getAllExpenses();
+  @GetMapping("/get/all")
+  ResponseEntity<List> getAllExpenses();
 
-  @GetMapping("/expense/user-expenses")
-  Collection<ExpenseDTO> getUserExpenses();
+  @GetMapping("/user-expenses")
+  ResponseEntity<List> getUserExpenses();
 
-  @GetMapping("/actuator")
-  ResponseEntity<Object> getServerInfo();
 
-  @GetMapping("/expense/types")
-  Collection<ExpenseCategory> getExpenseTypes();
+  @GetMapping("/types")
+  ResponseEntity<List> getExpenseTypes();
+
+
+  @GetMapping("/overview/{id}")
+  ResponseEntity<?>  readAccountOverview(@PathVariable(name = "id") long id);
+
+  @GetMapping("/global-overview")
+  ResponseEntity<?>  getGlobalOverview();
+
+  @GetMapping("/overview/expenses/{id}")
+  ResponseEntity<?>  getExpensesOverview(@PathVariable(name = "id") long id);
 
 
 }

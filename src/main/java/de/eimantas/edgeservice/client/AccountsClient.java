@@ -9,27 +9,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "${feign.client.config.expenses.name}", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "${feign.client.config.account.service}", configuration = AccountsClientConfig.class)
+@RequestMapping(value = "/account")
 public interface AccountsClient {
 
-  @GetMapping("/account/overview/{id}")
-  ResponseEntity<AccountOverViewDTO> readAccountOverview(@PathVariable(name = "id") long id);
 
-  @GetMapping("/account/get/{id}")
-  AccountDTO getAccountById(@PathVariable(name = "id") long id);
+  @GetMapping("/get/{id}")
+  ResponseEntity<?>  getAccountById(@PathVariable(name = "id") long id);
 
-  @GetMapping("/account/list")
-  ResponseEntity<List<AccountDTO>> getAccountList();
+  @GetMapping("/list")
+  ResponseEntity<List> getAccountList();
 
-  @GetMapping("/account/global-overview")
-  ResponseEntity<AllAccountsOverViewDTO> getGlobalOverview();
+  @GetMapping("/list/id")
+  ResponseEntity<List> getAccountListIds();
 
-  @GetMapping("/account/overview/expenses/{id}")
-  ResponseEntity<AccountOverViewDTO> getExpensesOverview(@PathVariable(name = "id") long id);
+  @PostMapping("/save")
+  ResponseEntity<?> postAccount(@RequestBody Object account);
 
-  @PostMapping("/account/save")
-  ResponseEntity<AccountDTO> postAccount(@RequestBody AccountDTO account);
-
-  @PutMapping("/account/save")
-  ResponseEntity<AccountDTO> updateAccount(@RequestBody AccountDTO account);
+  @PutMapping("/save")
+  ResponseEntity<?> updateAccount(@RequestBody Object account);
 }
