@@ -111,7 +111,7 @@ public class ExpensesController {
   @CrossOrigin(origins = "*")
   public ResponseEntity persistExpense(@RequestBody Object expense) {
     logger.info("saving expense : " + expense.toString());
-    ResponseEntity response = expensesClient.updateExpense(expense);
+    ResponseEntity response = expensesClient.postExpense(expense);
     logger.info("saved : " + expense.toString());
     return response;
   }
