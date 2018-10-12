@@ -17,7 +17,9 @@ public class BookingsController {
   @CrossOrigin(origins = "*")
   public ResponseEntity persistAccount(@RequestBody List<BookingDTO> bookingDTO) {
     logger.info("saving booking : " + bookingDTO.toString());
-    return ResponseEntity.ok("done");
+    BookingDTO booking = bookingDTO.get(0);
+    booking.setProject_id(12);
+    return ResponseEntity.ok(booking);
   }
 
 }

@@ -7,6 +7,9 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 
 import static org.junit.Assert.assertNotNull;
@@ -31,6 +34,26 @@ public class SecurityStuffTest {
     logger.info("test content:" + jsonString);
 
   }
+
+  @Test
+  public void parseDate() throws IOException {
+
+    String jsonString = "2018-10-12T02:49:01";
+    String full = "2018-10-12T18:15:46.196";
+
+    LocalDateTime dt = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String test =  dt.format(formatter);
+    logger.info("String is: " +  test);
+    LocalDateTime date =   LocalDateTime.parse(test, formatter);
+    assertNotNull(date);
+    logger.info("test parsed date:" + date);
+
+  }
+
+
+
+
 
 
   @Test
