@@ -18,7 +18,7 @@ public class BookingsController {
   public ResponseEntity persistAccount(@RequestBody List<BookingDTO> bookingDTO) {
     logger.info("saving booking : " + bookingDTO.toString());
     BookingDTO booking = bookingDTO.get(0);
-    booking.setProject_id(12);
+    booking.setServerBookingId(12);
     return ResponseEntity.ok(booking);
   }
 

@@ -23,5 +23,6 @@ public class BookingDTO {
   @JsonDeserialize(using = CustomLocalDateDeSerializer.class)
   @JsonSerialize(using = CustomLocalDateSerializer.class)
   private LocalDateTime endDate;
-  private int project_id;
+  private int projectId;
+  private int serverBookingId;
 }
