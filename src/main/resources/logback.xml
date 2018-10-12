@@ -42,4 +42,8 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="STASH"/>
     </root>
+
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
+        <level value="INFO" />
+    </logger>
 </configuration>
