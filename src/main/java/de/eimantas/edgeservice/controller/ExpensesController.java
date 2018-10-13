@@ -39,7 +39,6 @@ public class ExpensesController {
   //@HystrixCommand(fallbackMethod = "fallback")
   @GetMapping("/all")
   @CrossOrigin(origins = "*")
-
   public ResponseEntity<List> openExpenses() {
     logger.info("edge all expenses request");
     ResponseEntity<List> expenses = expensesClient.getAllExpenses();
