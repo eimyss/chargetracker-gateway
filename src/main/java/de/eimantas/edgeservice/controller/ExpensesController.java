@@ -229,6 +229,7 @@ public class ExpensesController {
   public ResponseEntity fallback(Throwable e) {
     logger.warn("faLLING BACK on get expenses");
     e.printStackTrace();
+    logger.warn("failed to fallback",e);
     return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

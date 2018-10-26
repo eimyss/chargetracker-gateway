@@ -43,11 +43,11 @@ public class UsersController {
     ResponseEntity response = usersClient.saveUser(userDTO);
     return response;
   }
-
-
+  
   public ResponseEntity fallback(Throwable e) {
     logger.warn("faLLING BACK on get expenses");
     e.printStackTrace();
+    logger.warn("failed to fallback", e);
     return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
