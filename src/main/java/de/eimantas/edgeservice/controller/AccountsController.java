@@ -1,6 +1,7 @@
 package de.eimantas.edgeservice.controller;
 
 import de.eimantas.edgeservice.client.AccountsClient;
+import de.eimantas.edgeservice.controller.expcetions.BadRequestException;
 import de.eimantas.edgeservice.dto.AccountDTO;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,29 +43,38 @@ public class AccountsController {
 
   @PostMapping("/save")
   @CrossOrigin(origins = "*")
-  public ResponseEntity persistAccount(@RequestBody Object account) {
-    logger.info("saving account : " + account.toString());
-    ResponseEntity response = accountsClient.postAccount(account);
-    return response;
+  public ResponseEntity persistAccount(@RequestBody Object account) throws BadRequestException {
+    if (account != null) {
+      logger.info("saving account : " + account.toString());
+      ResponseEntity response = accountsClient.postAccount(account);
+      return response;
+    }
 
+    logger.warn("passed object to save account is null");
+    throw new BadRequestException("account is null");
   }
 
 
   @PutMapping("/save")
   @CrossOrigin(origins = "*")
-  public ResponseEntity<AccountDTO> updateAccount(@RequestBody Object account) {
-    logger.info("updating account : " + account.toString());
-    ResponseEntity response = accountsClient.updateAccount(account);
-    logger.info("updated : " + response.getBody().toString());
-    return response;
+  public ResponseEntity<AccountDTO> updateAccount(@RequestBody Object account) throws BadRequestException {
 
+    if (account != null) {
+      logger.info("updating account : " + account.toString());
+      ResponseEntity response = accountsClient.updateAccount(account);
+      logger.info("updated : " + response.getBody().toString());
+      return response;
+
+    }
+    logger.warn("passed object to update account is null");
+    throw new BadRequestException("account is null");
   }
 
 
   public ResponseEntity fallback(Throwable e) {
     logger.warn("faLLING BACK on get expenses");
     e.printStackTrace();
-    logger.warn("failed to fallback",e);
+    logger.warn("failed to fallback", e);
     return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

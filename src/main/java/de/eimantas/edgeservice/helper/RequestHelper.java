@@ -1,4 +1,4 @@
-package de.eimantas.edgeservice.Helper;
+package de.eimantas.edgeservice.helper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class RequestHelper {
     BufferedReader in = new BufferedReader(
         new InputStreamReader(con.getInputStream()));
     String inputLine;
-    StringBuffer content = new StringBuffer();
+    StringBuilder content = new StringBuilder();
     while ((inputLine = in.readLine()) != null) {
       content.append(inputLine);
     }

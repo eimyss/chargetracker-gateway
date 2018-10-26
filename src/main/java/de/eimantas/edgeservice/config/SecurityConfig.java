@@ -60,6 +60,7 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         .antMatchers("/expenses*").hasRole("user")
         .antMatchers("/accounts*").hasRole("user")
         .antMatchers("/users*").hasRole("user")
+        .antMatchers("/actuator/prometheus").permitAll()
         .anyRequest().hasRole("user").and().csrf().disable();
   }
 }

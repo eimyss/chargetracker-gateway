@@ -11,25 +11,25 @@ import java.util.List;
 public interface ExpensesClient {
 
   @GetMapping("/get/{id}")
-  ResponseEntity<?>  getExpenseById(@PathVariable(name = "id") long id);
+  ResponseEntity<?> getExpenseById(@PathVariable(name = "id") long id);
 
   @PostMapping("/add")
   ResponseEntity<?> postExpense(@RequestBody Object expense);
 
   @PutMapping("/add")
-  ResponseEntity<?>  updateExpense(@RequestBody Object expense);
+  ResponseEntity<?> updateExpense(@RequestBody Object expense);
 
   @GetMapping("/search")
   ResponseEntity<List> searchExpenses(@RequestParam(name = "name") String name);
 
   @GetMapping("/populate")
-  ResponseEntity<List>   populateExpenses();
+  ResponseEntity<List> populateExpenses();
 
   @GetMapping("/account/{id}")
   ResponseEntity<List> getExpensesForAccount(@PathVariable(name = "id") long id);
 
   @GetMapping("/csv/read/{id}")
-  ResponseEntity<List>  importExpenses(@PathVariable(name = "id") long id);
+  ResponseEntity<List> importExpenses(@PathVariable(name = "id") long id);
 
   @GetMapping("/get/period")
   ResponseEntity<List> getExpensesInPeriod(@RequestParam("from") String fromDate, @RequestParam("to") String toDate);
@@ -46,13 +46,13 @@ public interface ExpensesClient {
 
 
   @GetMapping("/overview/{id}")
-  ResponseEntity<?>  readAccountOverview(@PathVariable(name = "id") long id);
+  ResponseEntity<?> readAccountOverview(@PathVariable(name = "id") long id);
 
   @GetMapping("/global-overview")
-  ResponseEntity<?>  getGlobalOverview();
+  ResponseEntity<?> getGlobalOverview();
 
   @GetMapping("/overview/expenses/{id}")
-  ResponseEntity<?>  getExpensesOverview(@PathVariable(name = "id") long id);
+  ResponseEntity<?> getExpensesOverview(@PathVariable(name = "id") long id);
 
 
 }

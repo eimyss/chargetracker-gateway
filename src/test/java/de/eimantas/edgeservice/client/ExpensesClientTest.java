@@ -1,7 +1,7 @@
 package de.eimantas.edgeservice.client;
 
 import de.eimantas.edgeservice.EdgeServiceApplication;
-import de.eimantas.edgeservice.Helper.RequestHelper;
+import de.eimantas.edgeservice.helper.RequestHelper;
 import de.eimantas.edgeservice.Utils.SecurityUtils;
 import de.eimantas.edgeservice.dto.ExpenseDTO;
 import feign.RequestInterceptor;

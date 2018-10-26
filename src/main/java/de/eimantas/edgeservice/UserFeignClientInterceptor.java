@@ -19,7 +19,7 @@ public class UserFeignClientInterceptor implements RequestInterceptor {
     Authentication authentication = securityContext.getAuthentication();
 
     if (authentication != null && authentication instanceof KeycloakAuthenticationToken) {
-      KeycloakAuthenticationToken details = (KeycloakAuthenticationToken) authentication;
+      // KeycloakAuthenticationToken details = (KeycloakAuthenticationToken) authentication;
       template.header(AUTHORIZATION_HEADER, String.format("%s %s", BEARER_TOKEN_TYPE, ((KeycloakAuthenticationToken) authentication).getAccount().getKeycloakSecurityContext().getTokenString()));
     }
   }

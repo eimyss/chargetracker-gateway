@@ -1,9 +1,9 @@
 package de.eimantas.edgeservice.controller;
 
-import de.eimantas.edgeservice.Helper.RequestHelper;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import de.eimantas.edgeservice.client.ExpensesRootlessClient;
 import de.eimantas.edgeservice.controller.expcetions.BadRequestException;
+import de.eimantas.edgeservice.helper.RequestHelper;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -229,7 +229,7 @@ public class ExpensesController {
   public ResponseEntity fallback(Throwable e) {
     logger.warn("faLLING BACK on get expenses");
     e.printStackTrace();
-    logger.warn("failed to fallback",e);
+    logger.warn("failed to fallback", e);
     return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
