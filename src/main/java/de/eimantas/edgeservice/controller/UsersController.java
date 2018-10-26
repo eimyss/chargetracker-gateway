@@ -43,7 +43,7 @@ public class UsersController {
     ResponseEntity response = usersClient.saveUser(userDTO);
     return response;
   }
-  
+
   public ResponseEntity fallback(Throwable e) {
     logger.warn("faLLING BACK on get expenses");
     e.printStackTrace();
