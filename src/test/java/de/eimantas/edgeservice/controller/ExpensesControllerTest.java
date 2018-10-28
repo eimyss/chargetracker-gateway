@@ -3,6 +3,7 @@ package de.eimantas.edgeservice.controller;
 import de.eimantas.edgeservice.client.AccountsClient;
 import de.eimantas.edgeservice.client.ExpensesClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,7 @@ public class ExpensesControllerTest {
 
 
   @Test
+  @Ignore
   public void getBackendInfoKeys() throws Exception {
     mockMvc.perform(get("/expenses/backend/keys")).andExpect(status().isOk())
         .andDo(MockMvcResultHandlers.print()).andExpect(content().contentType(contentType))
@@ -84,6 +86,7 @@ public class ExpensesControllerTest {
   }
 
   @Test
+  @Ignore
   public void getBackendInfoForKey() throws Exception {
     mockMvc.perform(get("/expenses/backend/keys/info")).andExpect(status().isOk())
         .andDo(MockMvcResultHandlers.print())
@@ -91,12 +94,14 @@ public class ExpensesControllerTest {
   }
 
   @Test
+  @Ignore
   public void getBackendInfoForNonExistingKey() throws Exception {
     mockMvc.perform(get("/expenses/backend/keys/eimantas")).andExpect(status().isBadRequest())
         .andDo(MockMvcResultHandlers.print());
   }
 
   @Test
+  @Ignore
   public void getExpensesTypes() throws Exception {
     mockMvc.perform(get("/expenses/types")).andExpect(status().isOk())
         .andDo(MockMvcResultHandlers.print()).andExpect(content().contentType(contentType))
