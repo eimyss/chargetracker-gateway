@@ -24,9 +24,9 @@ public class SecurityUtils {
 
     logger.info("starting request");
     HttpClient client = new DefaultHttpClient();
-    HttpPost request = new HttpPost("https://security.eimantas-services.de/auth/realms/expenses/protocol/openid-connect/token");
+    HttpPost request = new HttpPost("https://security.eimantas-services.de/auth/realms/expenses-dev/protocol/openid-connect/token");
     List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-    pairs.add(new BasicNameValuePair("client_id", "expenses-app"));
+    pairs.add(new BasicNameValuePair("client_id", "expenses-app-dev"));
     pairs.add(new BasicNameValuePair("username", "test"));
     pairs.add(new BasicNameValuePair("password", "test"));
     pairs.add(new BasicNameValuePair("grant_type", "password"));
