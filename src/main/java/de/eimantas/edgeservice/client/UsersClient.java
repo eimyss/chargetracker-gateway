@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(value = "${feign.client.config.user.service}", configuration = UsersClientConfig.class)
+@FeignClient(value = "${feign.client.config.user.service}", configuration = ClientConfig.class)
 @RequestMapping(value = "/user")
 public interface UsersClient {
 

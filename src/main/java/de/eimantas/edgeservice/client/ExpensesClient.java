@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "${feign.client.config.expense.service}", configuration = ExpensesClientConfig.class)
+@FeignClient(value = "${feign.client.config.expense.service}", configuration = ClientConfig.class)
 @RequestMapping(value = "/expense")
 public interface ExpensesClient {
 
   @GetMapping("/get/{id}")
-  ResponseEntity<?> getExpenseById(@PathVariable(name = "id") long id);
+  ResponseEntity<?>  getExpenseById(@PathVariable(name = "id") long id);
 
   @PostMapping("/add")
-  ResponseEntity<?> postExpense(@RequestBody Object expense);
+  ResponseEntity<?>  postExpense(@RequestBody Object expense);
 
   @PutMapping("/add")
-  ResponseEntity<?> updateExpense(@RequestBody Object expense);
+  ResponseEntity<?>  updateExpense(@RequestBody Object expense);
 
   @GetMapping("/search")
   ResponseEntity<List> searchExpenses(@RequestParam(name = "name") String name);
@@ -46,13 +46,13 @@ public interface ExpensesClient {
 
 
   @GetMapping("/overview/{id}")
-  ResponseEntity<?> readAccountOverview(@PathVariable(name = "id") long id);
+  ResponseEntity<?>  readAccountOverview(@PathVariable(name = "id") long id);
 
   @GetMapping("/global-overview")
-  ResponseEntity<?> getGlobalOverview();
+  ResponseEntity<?>  getGlobalOverview();
 
   @GetMapping("/overview/expenses/{id}")
-  ResponseEntity<?> getExpensesOverview(@PathVariable(name = "id") long id);
+  ResponseEntity<?>  getExpensesOverview(@PathVariable(name = "id") long id);
 
 
 }

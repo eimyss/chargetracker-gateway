@@ -20,17 +20,19 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Configuration
-public class OverviewClientConfig {
-  @Bean
-  Logger.Level feignLoggerLevel() {
-    return Logger.Level.FULL;
-  }
+public class ClientConfig {
 
   @Value("${service.feign.connectTimeout:60000}")
   private int connectTimeout;
 
   @Value("${service.feign.readTimeOut:60000}")
   private int readTimeout;
+
+
+  @Bean
+  Logger.Level feignLoggerLevel() {
+    return Logger.Level.FULL;
+  }
 
   @Bean
   public Decoder feignDecoder() {
@@ -45,6 +47,7 @@ public class OverviewClientConfig {
         .registerModule(new Jdk8Module())
         .registerModule(new JavaTimeModule())
         .registerModule(new Jackson2HalModule());
+
 
     return customMapper;
   }

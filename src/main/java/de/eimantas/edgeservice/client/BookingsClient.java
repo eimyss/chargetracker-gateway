@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "${feign.client.config.expense.service}", configuration = BookingsClientConfig.class)
+@FeignClient(value = "${feign.client.config.expense.service}", configuration = ClientConfig.class)
 @RequestMapping(value = "/booking")
 public interface BookingsClient {
 
