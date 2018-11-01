@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.utils.test.TestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -179,6 +180,7 @@ public class ExpensesClientTest {
     exp.setBetrag(BigDecimal.valueOf(50));
     exp.setOrt("Intellij");
     exp.setAccountId(2L);
+    exp.setUserId(SecurityUtils.TEST_USER_ID);
     exp.setValid(true);
     String bookmarkJson = json(exp);
 

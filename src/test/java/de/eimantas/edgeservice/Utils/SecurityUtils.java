@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class SecurityUtils {
+  public static final String TEST_USER_ID ="9a204126-12b9-4efe-9d9b-3808aba51ba3";
   private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SecurityUtils.class);
 
   public static String getJsonString() throws IOException {

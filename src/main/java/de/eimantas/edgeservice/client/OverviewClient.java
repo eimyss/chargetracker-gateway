@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = "${feign.client.config.expenses.name}", configuration = ClientConfig.class)
+@FeignClient(value = "${feign.client.config.expense.service}", configuration = ClientConfig.class)
 public interface OverviewClient {
 
   @GetMapping("/account/overview/{id}")
