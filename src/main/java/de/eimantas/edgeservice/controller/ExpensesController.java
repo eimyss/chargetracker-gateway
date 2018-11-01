@@ -20,6 +20,9 @@ import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ *
+ */
 @RestController
 @RequestMapping(value = "/expenses")
 public class ExpensesController {
@@ -36,6 +39,9 @@ public class ExpensesController {
     this.expensesClient = expensesClient;
   }
 
+  /**
+   * @return
+   */
   //@HystrixCommand(fallbackMethod = "fallback")
   @GetMapping("/all")
   @CrossOrigin(origins = "*")
