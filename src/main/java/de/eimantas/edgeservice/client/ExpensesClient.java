@@ -25,6 +25,9 @@ public interface ExpensesClient {
   @GetMapping("/populate")
   ResponseEntity<List> populateExpenses();
 
+  @GetMapping("/get/refbooking/{id}")
+  ResponseEntity<?> getExpenseByRefBooking(@PathVariable(name = "id") long id);
+
   @GetMapping("/account/{id}")
   ResponseEntity<List> getExpensesForAccount(@PathVariable(name = "id") long id);
 

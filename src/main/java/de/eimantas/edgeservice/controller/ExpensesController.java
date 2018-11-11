@@ -142,6 +142,16 @@ public class ExpensesController {
   }
 
 
+  @GetMapping("/get/refbooking/{id}")
+  @CrossOrigin(origins = "*")
+  public ResponseEntity getExpenseforRefBooking(@PathVariable long id) {
+    logger.info("list expense request for account id " + id);
+    ResponseEntity expense = expensesClient.getExpenseByRefBooking(id);
+    logger.info("returning expense: " + expense.toString());
+    return expense;
+  }
+
+
   @GetMapping("/get/{id}")
   @CrossOrigin(origins = "*")
   public ResponseEntity getExpenseById(@PathVariable long id) {
