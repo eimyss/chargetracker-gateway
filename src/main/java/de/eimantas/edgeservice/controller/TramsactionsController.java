@@ -38,7 +38,7 @@ public class TramsactionsController {
   }
 
 
-  @PostMapping("/get/{type}/{id}")
+  @GetMapping("/get/{type}/{id}")
   @CrossOrigin(origins = "*")
   public ResponseEntity getTransactionByEntityRef(@PathVariable(name = "type") String type, @PathVariable(name = "id") long id) throws BadRequestException {
     logger.info("get transaction by type and id");
