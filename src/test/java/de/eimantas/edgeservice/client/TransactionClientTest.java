@@ -104,7 +104,7 @@ public class TransactionClientTest {
 
   @Test
   public void testGetTransactionByType() {
-    ResponseEntity response = transactionsClient.getTransactionByEntityAndType("BOOKING", 1);
+    ResponseEntity response = transactionsClient.getTransactionByEntityAndType("BOOKING", 11);
     assertNotNull(response);
     assertNotNull(response.getBody());
     assertNotEquals(response.getBody(), "");

@@ -12,7 +12,7 @@ public interface AccountsClient {
 
 
   @GetMapping("/get/{id}")
-  ResponseEntity<?>  getAccountById(@PathVariable(name = "id") long id);
+  ResponseEntity<?> getAccountById(@PathVariable(name = "id") long id);
 
   @GetMapping("/list")
   ResponseEntity<List> getAccountList();
@@ -21,8 +21,16 @@ public interface AccountsClient {
   ResponseEntity<List> getAccountListIds();
 
   @PostMapping("/save")
-  ResponseEntity<?>  postAccount(@RequestBody Object account);
+  ResponseEntity<?> postAccount(@RequestBody Object account);
 
   @PutMapping("/save")
-  ResponseEntity<?>  updateAccount(@RequestBody Object account);
+  ResponseEntity<?> updateAccount(@RequestBody Object account);
+
+
+  @GetMapping("/history/get/{id}")
+  ResponseEntity<List> getAccountHistory(@PathVariable(name = "id") long id);
+
+  @GetMapping(value = "/history/list")
+  ResponseEntity<List> getAllAccountHistories();
+
 }

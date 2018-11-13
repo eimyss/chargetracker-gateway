@@ -132,6 +132,26 @@ public class AccountClientTest {
   }
 
 
+  @Test
+  public void testGetAccountHistory() {
+    ResponseEntity<List> response =  client.getAccountHistory(1);
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
+    logger.info(response.toString());
+  }
+
+
+  @Test
+  public void getAllAccountHistories() {
+    ResponseEntity<List> response =  client.getAllAccountHistories();
+    assertNotNull(response);
+    assertNotNull(response.getBody());
+    assertNotEquals(response.getBody(), "");
+    logger.info(response.toString());
+  }
+
+
 
   @Configuration
   @EnableAutoConfiguration

@@ -25,9 +25,9 @@ public class AccountsController {
   @CrossOrigin(origins = "*")
   public ResponseEntity<List> getAccountList() {
     logger.info("edge expenses request");
-    ResponseEntity<List> expenses = accountsClient.getAccountList();
-    logger.info("account list response: " + expenses.toString());
-    return expenses;
+    ResponseEntity<List> accounts = accountsClient.getAccountList();
+    logger.info("account list response: " + accounts.getBody().size());
+    return accounts;
   }
 
 
@@ -38,6 +38,26 @@ public class AccountsController {
     ResponseEntity account = accountsClient.getAccountById(id);
     logger.info("account id response: " + account.toString());
     return account;
+  }
+
+
+  @GetMapping("/history/list")
+  @CrossOrigin(origins = "*")
+  public ResponseEntity<List> getAllAccountsHistory() {
+    logger.info("edge expenses request");
+    ResponseEntity<List> histories = accountsClient.getAllAccountHistories();
+    logger.info("account list response: " + histories.getBody().size());
+    return histories;
+  }
+
+
+  @GetMapping("/history/get/{id}")
+  @CrossOrigin(origins = "*")
+  public ResponseEntity<List> getAccountHistoryById(@PathVariable long id) {
+    logger.info("edge accoung get request for id: " + id);
+    ResponseEntity<List> history = accountsClient.getAccountHistory(id);
+    logger.info("account id response: " + history.getBody().size());
+    return history;
   }
 
 
