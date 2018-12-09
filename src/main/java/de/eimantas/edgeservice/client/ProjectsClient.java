@@ -19,4 +19,15 @@ public interface ProjectsClient {
   @PostMapping("/save")
   ResponseEntity<?>  postProject(@RequestBody Object account);
 
+
+  @GetMapping("/get/address/all")
+  ResponseEntity<List> getAllAddresses();
+
+  @GetMapping("/get/{id}/address")
+  ResponseEntity<?> getProjectAddress(@PathVariable(name = "id") long id);
+
+  @GetMapping( "/get/address/{id}")
+  ResponseEntity<?> getAddressById(@PathVariable(name = "id") long id);
+
+
 }
